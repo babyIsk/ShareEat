@@ -1,0 +1,37 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "com.example.shareeat"
+        minSdk 21
+        targetSdk 32
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner" // Utilisez AndroidX pour les tests
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.3.0' // Utilisez AndroidX pour AppCompat
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0' // Utilisez AndroidX pour ConstraintLayout
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.1.2' // Utilisez AndroidX pour les tests
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0' // Utilisez AndroidX pour les tests
+    implementation files('libs/mysql-connector-java-6.0.6-bin.jar')
+}
