@@ -9,7 +9,7 @@ public class ConnexionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
-        getSupportActionBar().hide(); // test babylone
+        getSupportActionBar().hide(); // test babylone 2ème test
     }
 
 }
