@@ -1,40 +1,63 @@
 package com.example.shareeat;
 
-public class PlatActivity {
-    int idP;
-    String titreP;
-    String descriptionP;
-    String[] ingrédients;
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
-    public int getIdP() {
-        return idP;
+
+public class PlatActivity extends Activity {
+    ImageView imgP;
+    TextView txtTitreP;
+    TextView txtDescriptionP;
+    TextView txtIngredients;
+    ListView listIngredients;
+    @Override
+    protected void onCreate (Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        //lier le layout à l'activity
+        setContentView(R.layout.activity_plat);
+
+        //Obtention des références sur les composants (ressources)
+        txtTitreP = (TextView) findViewById(R.id.titrePlat);
+        txtDescriptionP = (TextView) findViewById(R.id.descriptionPlat);
+        imgP = (ImageView) findViewById(R.id.imgPlat);
+        txtIngredients = (TextView) findViewById(R.id.ingredientsLabel);
+        listIngredients = (ListView) findViewById(R.id.ingredientsList);
     }
 
-    public void setIdP(int idP) {
-        this.idP = idP;
+    @Override
+    protected void onStart () {
+        super.onStart();
+    }
+    @Override
+    protected void onResume () {
+        super.onResume();
+
+        String titre = "Burrata du chef";
+        txtTitreP.setText(titre);
+        String resume = "Magnifique plat/entrée d'origine italienne !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+        txtDescriptionP.setText(resume);
+
+        String[] ingredients = {"Burrata", "Tomate", "Huile d'olive"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ingredients);
+        listIngredients.setAdapter(adapter);
+    }
+    @Override
+    protected void onPause () {
+        super.onPause();
     }
 
-    public String getTitreP() {
-        return titreP;
+    @Override
+    protected void onStop () {
+        super.onStop();
     }
 
-    public void setTitreP(String titreP) {
-        this.titreP = titreP;
-    }
-
-    public String getDescriptionP() {
-        return descriptionP;
-    }
-
-    public void setDescriptionP(String descriptionP) {
-        this.descriptionP = descriptionP;
-    }
-
-    public String[] getIngrédients() {
-        return ingrédients;
-    }
-
-    public void setIngrédients(String[] ingrédients) {
-        this.ingrédients = ingrédients;
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
     }
 }
