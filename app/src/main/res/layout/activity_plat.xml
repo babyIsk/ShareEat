@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".PlatActivity">
 
     <ListView
         android:id="@+id/ingredientsList"
@@ -55,18 +56,6 @@
         app:layout_constraintTop_toBottomOf="@+id/titrePlat"
         app:layout_constraintVertical_bias="0.0" />
 
-    <ImageView
-        android:id="@+id/imgPlat"
-        android:layout_width="178dp"
-        android:layout_height="167dp"
-        app:layout_constraintBottom_toTopOf="@+id/titrePlat"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.687"
-        app:srcCompat="@drawable/plat_img" />
-
     <TextView
         android:id="@+id/ingredientsLabel"
         android:layout_width="wrap_content"
@@ -82,5 +71,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/descriptionPlat"
         app:layout_constraintVertical_bias="0.009" />
+
+<!-- background="@null" va supprimer toute indication visuelle de clic -->
+    <EditText
+        android:id="@+id/dateAjoutPlat"
+        android:layout_width="160dp"
+        android:layout_height="38dp"
+        android:background="@null"
+        android:clickable="false"
+        android:ems="10"
+        android:focusable="false"
+        android:hint="Date du jour"
+        android:inputType="date"
+        android:textAlignment="center"
+        android:textColor="@color/gris"
+        app:layout_constraintBottom_toTopOf="@+id/titrePlat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/imgPlat"
+        android:layout_width="181dp"
+        android:layout_height="227dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        app:layout_constraintBottom_toTopOf="@+id/dateAjoutPlat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/plat_img"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
