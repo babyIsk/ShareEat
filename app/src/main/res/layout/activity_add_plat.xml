@@ -7,8 +7,6 @@
 
     <!-- background="@null" va supprimer toute indication visuelle de clic -->
 
-    <!-- la bordure du style/encadre carre de l'image (strokeWith, strokeColor) sont obetenu
-    grace a l'ajout d'une librairie dans le gradle -->
     <EditText
         android:id="@+id/dateFormAjoutPlat"
         android:layout_width="205dp"
@@ -27,6 +25,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.385" />
 
+    <!-- la bordure du style/encadre carre de l'image (strokeWith, strokeColor) sont obetenu
+    grace a l'ajout d'une librairie dans le gradle -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/addImgPlat"
         style="@style/carre"
@@ -60,4 +60,51 @@
         app:layout_constraintTop_toBottomOf="@+id/addImgPlat"
         app:layout_constraintVertical_bias="0.633"
         app:srcCompat="@drawable/add_photo" />
+
+    <EditText
+        android:id="@+id/titrePlatInput"
+        android:layout_width="343dp"
+        android:layout_height="46dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:background="@drawable/edittextborder"
+        android:padding="10dp"
+        android:hint="Titre"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateFormAjoutPlat"
+        app:layout_constraintVertical_bias="0.063" />
+
+    <EditText
+        android:id="@+id/descPlatInput"
+        android:layout_width="341dp"
+        android:layout_height="110dp"
+        android:background="@drawable/edittextborder"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Description"
+        android:inputType="textMultiLine"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.485"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titrePlatInput"
+        app:layout_constraintVertical_bias="0.077" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="202dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="26dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/descPlatInput"
+        app:layout_constraintVertical_bias="0.0" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
