@@ -23,6 +23,11 @@
 
         <activity android:name="PlatActivity"
             android:exported="true">
+
+        </activity>
+
+        <activity android:name=".addPlatActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,9 +35,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".addPlatActivity">
-
-        </activity>
     </application>
 
 </manifest>
