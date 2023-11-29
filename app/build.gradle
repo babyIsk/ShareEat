@@ -29,8 +29,8 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation files('C:\\Users\\calli\\OneDrive\\Documents\\GitHub\\ShareEat\\app\\libs\\mysql-connector-java-5.1.49.jar')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    implementation files('libs/mysql-connector-java-6.0.6-bin.jar')
 }
