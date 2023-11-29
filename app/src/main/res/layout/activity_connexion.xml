@@ -100,8 +100,8 @@
 
     <Button
         android:id="@+id/loginButton"
-        android:layout_width="126dp"
-        android:layout_height="68dp"
+        android:layout_width="161dp"
+        android:layout_height="62dp"
         android:layout_marginTop="48dp"
         android:background="@drawable/boutton"
         android:text="Se connecter"

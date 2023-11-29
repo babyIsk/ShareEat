@@ -9,5 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gris">#CCCCCC</color>
     <color name="rouge_shareeat">#EA4334</color>
+    <color name="rouge_shareeat_transparent">#1FEA4334</color>
     <color name="jaune_shareeat">#FABE58</color>
+    <color name="vert_shareeat">#7FA428</color>
 </resources>
