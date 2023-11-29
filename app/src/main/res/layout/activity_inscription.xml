@@ -7,43 +7,62 @@
     tools:context=".InscriptionActivity">
 
 
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="261dp"
+        android:layout_height="224dp"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/logosareeat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.55"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
     <ViewFlipper
         android:id="@+id/view_flipperInscription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="center"
-        android:layout_marginEnd="78dp"
-        android:layout_marginBottom="216dp"
+        android:layout_centerInParent="true"
         android:inAnimation="@android:anim/slide_out_right"
         android:outAnimation="@android:anim/slide_in_left">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="331dp"
+            android:layout_marginTop="50dp"
             android:layout_gravity="center"
             android:orientation="vertical">
 
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inscription 1/2"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"/>
             <TextView
                 android:id="@+id/prenomtextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Prenom :"
+                android:layout_marginTop="20dp"
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/nomEditText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.8" />
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/prenomEditText"
-                android:layout_width="match_parent"
+                android:layout_width="258dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:background="@drawable/edittextborder"
                 android:hint=""
+                android:inputType="textCapWords"
                 android:padding="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -70,6 +89,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edittextborder"
                 android:hint=""
+                android:inputType="textCapWords"
                 android:padding="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -108,7 +128,7 @@
                 android:layout_width="126dp"
                 android:layout_height="68dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/boutton"
                 android:onClick="nextView"
                 android:text="Suivant" />
@@ -117,14 +137,26 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="435dp"
+            android:layout_marginTop="75dp"
             android:layout_gravity="center"
             android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inscription page 2/2"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"/>
 
             <TextView
                 android:id="@+id/emailtextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:text="Adresse Email :"
                 android:textColor="@color/black"
                 android:textStyle="bold"
@@ -151,7 +183,7 @@
                 android:id="@+id/confirmationemailtextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nom :"
+                android:text="Confirmez votre adresse email :"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/nomEditText"
@@ -192,6 +224,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edittextborder"
                 android:hint=""
+                android:inputType="textPassword"
                 android:padding="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -204,7 +237,7 @@
                 android:id="@+id/confirmationmdptextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mot de passe :"
+                android:text="Confirmez votre mot de passe :"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/nomEditText"
@@ -219,6 +252,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edittextborder"
                 android:hint=""
+                android:inputType="textPassword"
                 android:padding="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -228,13 +262,12 @@
 
 
             <Button
-                android:id="@+id/loginButton"
+                android:id="@+id/SignUpButton"
                 android:layout_width="126dp"
                 android:layout_height="68dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/boutton"
-                android:onClick="nextView"
                 android:text="S'inscrire" />
 
 
