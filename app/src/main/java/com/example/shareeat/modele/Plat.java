@@ -1,4 +1,4 @@
-package com.example.shareeat;
+package com.example.shareeat.modele;
 
 public class Plat {
     int idP;
