@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 // Transition vers l'activité principale
                 startActivity(new Intent(MainActivity.this, ConnexionActivity.class));
+                finish();
                 // ou masquage du layout temporaire : findViewById(R.id.yourLayoutId).setVisibility(View.GONE);
             }
         }, 2000); // Délai de 2000 millisecondes (2 secondes)

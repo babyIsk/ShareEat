@@ -40,7 +40,10 @@ public class ConnexionActivity extends AppCompatActivity {
         loginButton.setOnClickListener(view -> {
             Utilisateur utilisateur = connexion(emailEditText.getText().toString(), passwordEditText.getText().toString());
             if (utilisateur != null) {
-                Toast.makeText(ConnexionActivity.this, "Connexion réussite : " + utilisateur.getPseudo(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
+                intent.putExtra("user", utilisateur);
+                startActivity(intent);
+                finish();
             } else {
                 Toast.makeText(ConnexionActivity.this, "Connexion impossible veuillez vérifier votre eamil ou votre mot de passe", Toast.LENGTH_SHORT).show();
             }
