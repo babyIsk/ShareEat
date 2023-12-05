@@ -10,7 +10,6 @@ public class Plat {
     public int getIdP() {
         return idP;
     }
-
     public int getIdUtilisateur() {return idUtilisateur;}
 
     public void setIdP(int idP) {
