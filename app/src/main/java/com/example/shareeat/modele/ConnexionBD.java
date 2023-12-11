@@ -90,7 +90,7 @@ public class ConnexionBD {
             pStmMessage.setInt(4, userId);
             ResultSet resultSet = pStmMessage.executeQuery();
             while (resultSet.next()) {
-                Message message = new Message(resultSet.getInt("IdSender"),resultSet.getInt("IdReceiver"),resultSet.getString("Message"),resultSet.getDate("Heure"));
+                Message message = new Message(resultSet.getInt("IdSender"),resultSet.getInt("IdReceiver"),resultSet.getString("Message"),resultSet.getTimestamp("Heure"));
                 messages.add(message);
             }
             return messages;

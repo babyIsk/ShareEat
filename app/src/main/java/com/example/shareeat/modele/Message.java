@@ -1,21 +1,23 @@
 package com.example.shareeat.modele;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Locale;;
 
 public class Message {
     private int IdSender;
     private int IdReceiver;
     private String Message;
-    private Date date;
+    private Timestamp  date;
 
     public Message(int idSender, int idReceiver, String message) {
         IdSender = idSender;
         IdReceiver = idReceiver;
         Message = message;
-        this.date = new Date(System.currentTimeMillis());
+        this.date = new Timestamp (System.currentTimeMillis());
     }
 
-    public Message(int idSender, int idReceiver, String message, Date date) {
+    public Message(int idSender, int idReceiver, String message, Timestamp date) {
         IdSender = idSender;
         IdReceiver = idReceiver;
         Message = message;
@@ -34,7 +36,8 @@ public class Message {
         return Message;
     }
 
-    public Date getDate() {
-        return date;
+    public String getDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.FRENCH);
+        return dateFormat.format(date);
     }
 }
