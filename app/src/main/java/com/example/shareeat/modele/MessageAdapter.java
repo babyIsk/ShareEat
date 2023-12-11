@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.shareeat.R;
 
@@ -65,12 +66,15 @@ public class MessageAdapter extends BaseAdapter {
             }
         }
 
+
+
         TextView tvMessage = convertView.findViewById(R.id.tvMessage);
         TextView tvDate = convertView.findViewById(R.id.tvDate);
 
         // Mise à jour de l'interface utilisateur avec les données du message
         tvMessage.setText(message.getMessage());
         tvDate.setText(message.getDate().toString());  // Mettez à jour avec le format de date approprié
+
 
         return convertView;
     }
