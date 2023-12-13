@@ -62,6 +62,8 @@ public class InscriptionActivity extends AppCompatActivity {
             viewFlipper.setInAnimation(this, android.R.anim.slide_in_left);
             viewFlipper.setOutAnimation(this, android.R.anim.slide_out_right);
             viewFlipper.showPrevious();
+        }else{
+            finish();
         }
     }
 

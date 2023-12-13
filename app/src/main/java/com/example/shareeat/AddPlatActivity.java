@@ -1,5 +1,4 @@
 package com.example.shareeat;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;

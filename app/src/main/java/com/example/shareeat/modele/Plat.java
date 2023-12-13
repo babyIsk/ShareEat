@@ -2,6 +2,7 @@ package com.example.shareeat.modele;
 
 public class Plat {
     int idP;
+    int idUtilisateur;
     String titreP;
     String descriptionP;
     String[] ingrédients;
@@ -9,6 +10,7 @@ public class Plat {
     public int getIdP() {
         return idP;
     }
+    public int getIdUtilisateur() {return idUtilisateur;}
 
     public void setIdP(int idP) {
         this.idP = idP;

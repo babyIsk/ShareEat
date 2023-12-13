@@ -21,7 +21,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-
     <ViewFlipper
         android:id="@+id/view_flipperInscription"
         android:layout_width="wrap_content"
@@ -33,25 +32,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="331dp"
-            android:layout_marginTop="50dp"
             android:layout_gravity="center"
-            android:orientation="vertical">
+            android:layout_marginTop="50dp"
+            android:orientation="vertical"
+            android:background="@drawable/encadrement_formulaire">
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="Inscription 1/2"
                 android:textColor="@color/black"
                 android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_gravity="center"/>
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/prenomtextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Prenom :"
                 android:layout_marginTop="20dp"
+                android:text="Prenom :"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
@@ -138,19 +139,19 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="435dp"
-            android:layout_marginTop="75dp"
             android:layout_gravity="center"
+            android:layout_marginTop="75dp"
             android:orientation="vertical">
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="Inscription page 2/2"
                 android:textColor="@color/black"
                 android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_gravity="center"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/emailtextView"
@@ -278,9 +279,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_margin="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/boutton"
         android:onClick="previousView"
         android:text="Retour" />
