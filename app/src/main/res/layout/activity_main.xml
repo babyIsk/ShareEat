@@ -11,8 +11,7 @@
         android:id="@+id/backgroundView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/gradient_background"
-        android:onClick="startAnimation"/>
+        android:background="@drawable/gradient_background" />
     <ImageView
         android:id="@+id/logoImageView"
         android:layout_width="248dp"

@@ -10,6 +10,10 @@
     android:layout_height="wrap_content">
 
     <!-- background="@null" va supprimer toute indication visuelle de clic -->
+
+    <!-- la bordure du style/encadre carre de l'image (strokeWith, strokeColor) sont obetenu
+    grace a l'ajout d'une librairie dans le gradle -->
+
     <EditText
         android:id="@+id/dateFormAjoutPlat"
         android:layout_width="205dp"
@@ -24,12 +28,11 @@
         android:textColor="@color/gris"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.514"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.385" />
+        app:layout_constraintVertical_bias="0.258" />
 
-    <!-- la bordure du style/encadre carre de l'image (strokeWith, strokeColor) sont obetenu
-    grace a l'ajout d'une librairie dans le gradle -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/addImgPlat"
         style="@style/carre"
@@ -40,44 +43,13 @@
         android:src="@drawable/icone_img"
         app:layout_constraintBottom_toTopOf="@+id/dateFormAjoutPlat"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:shapeAppearanceOverlay="@style/carre"
         app:strokeColor="@color/rouge_shareeat"
         app:strokeWidth="4dp" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnAddPhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:backgroundTint="@color/rouge_shareeat"
-        android:clickable="true"
-        android:contentDescription="TODO"
-        app:layout_constraintBottom_toTopOf="@+id/dateFormAjoutPlat"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.763"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addImgPlat"
-        app:layout_constraintVertical_bias="0.633"
-        app:srcCompat="@drawable/add_photo" />
-
-    <EditText
-        android:id="@+id/titrePlatInput"
-        android:layout_width="343dp"
-        android:layout_height="46dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:background="@drawable/edittextborder"
-        android:padding="10dp"
-        android:hint="Titre"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateFormAjoutPlat"
-        app:layout_constraintVertical_bias="0.063" />
 
     <EditText
         android:id="@+id/descPlatInput"
@@ -91,10 +63,10 @@
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.485"
+        app:layout_constraintHorizontal_bias="0.542"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titrePlatInput"
-        app:layout_constraintVertical_bias="0.077" />
+        app:layout_constraintVertical_bias="0.043" />
 
     <View
         android:id="@+id/divider"
@@ -105,48 +77,79 @@
         android:background="?android:attr/listDivider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintHorizontal_bias="0.519"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/descPlatInput"
         app:layout_constraintVertical_bias="0.0" />
-
 
     <TextView
         android:id="@+id/ingredientsLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:text="Ingrédients : "
         android:textColor="@color/rouge_shareeat"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:layout_constraintVertical_bias="0.096" />
+        app:layout_constraintVertical_bias="0.04" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listIngrRecyclerView"
-        android:layout_width="match_parent"
+        android:layout_width="404dp"
         android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="true"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_marginTop="5dp"
+        android:nestedScrollingEnabled="true"
 
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ingredientsLabel" />
+
+    <EditText
+        android:id="@+id/titrePlatInput"
+        android:layout_width="343dp"
+        android:layout_height="46dp"
+        android:background="@drawable/edittextborder"
+        android:ems="10"
+        android:hint="Titre"
+        android:inputType="textPersonName"
+        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.558"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ingredientsLabel"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/dateFormAjoutPlat"
+        app:layout_constraintVertical_bias="0.048" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnAddPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:backgroundTint="@color/rouge_shareeat"
+        android:clickable="true"
+        android:contentDescription="TODO"
+        app:layout_constraintBottom_toTopOf="@+id/dateFormAjoutPlat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.749"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/addImgPlat"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/add_photo" />
+
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="32dp"
         android:text="+"
         android:textSize="22sp"
-        android:textColor="@color/gris"
+        android:textColor="@color/rouge_shareeat"
         android:background="@drawable/add_btn_border_gray"
 
         app:layout_constraintBottom_toBottomOf="parent"
