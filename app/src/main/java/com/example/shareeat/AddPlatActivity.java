@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shareeat.adapter.IngrAdapter;
+import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.Ingredient;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,29 +53,39 @@ public class AddPlatActivity extends Activity {
         // LayoutManager est responsable de la mesure et du positionnement
         // des éléments de la RecyclerView.
         // Nous devons attacher un layoutManager avant de pouvoir utiliser la RecyclerView.
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         ingrRecyclerView.setLayoutManager(layoutManager);
 
         ingrAdapter = new IngrAdapter(this, ingredientList);
         ingrRecyclerView.setAdapter(ingrAdapter);
 
-        Ingredient ingr = new Ingredient();
-        ingr.setIngr("C'est un ingredient test");
-        ingr.setStatus(0); // 0 -> false, 1 -> true
-        ingr.setId(1);
+        //Ingredient ingr = new Ingredient();
+        //ingr.setIngr("C'est un ingredient test");
+        //ingr.setStatus(0); // 0 -> false nonchecked, 1 -> true checked
+        //ingr.setId(1);
 
-        ingredientList.add(ingr);
-        ingredientList.add(ingr);
-        ingredientList.add(ingr);
-        ingredientList.add(ingr);
-        ingredientList.add(ingr);
-        ingredientList.add(ingr);
+        try {
+            ConnexionBD connBD = new ConnexionBD();
+            ingredientList = new ConnexionBD().getTousIngredients();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        //ingredientList.add(ingr);
+        //ingredientList.add(ingr);
+        //ingredientList.add(ingr);
+        //ingredientList.add(ingr);
+        //ingredientList.add(ingr);
+        //ingredientList.add(ingr);
 
         if (ingredientList.isEmpty()) {
-            // La liste d'ingrédients est vide, ajoutez des logs ou un message de débogage.
+            // La liste d'ingrédients est vide, ajout des logs ou un message de débogage.
             Log.d("AddPlatActivity", "La liste d'ingrédients est vide.");
         } else {
-            // La liste d'ingrédients contient des éléments, mettez à jour l'adaptateur.
+            // La liste d'ingrédients contient des éléments, mise à jour de l'adaptateur.
             ingrAdapter.setIngredients(ingredientList);
         }
         //************** FIN (liste des ingrédients) ************************************
