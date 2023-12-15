@@ -18,6 +18,12 @@ public class ConnexionBD {
     private PreparedStatement pStmConnexion;
     private PreparedStatement pStmMessage;
     private PreparedStatement pStmEnvoieMessage;
+    private PreparedStatement pStmTousIngredients;
+    private PreparedStatement pStmAjoutIngr;
+    private PreparedStatement pStmUpdateStatus;
+    private PreparedStatement pStmUpdateIngr;
+    private PreparedStatement pStmDeleteIngr;
+
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
         this.conn = seConnecterBD();
@@ -36,6 +42,11 @@ public class ConnexionBD {
         pStmEnvoieMessage = conn.prepareStatement("INSERT INTO Messagerie (IdSender,IdReceiver,Message,Heure) VALUES (?,?,?,NOW()) ");
         pStmConnexion = conn.prepareStatement("SELECT * FROM Utilisateurs WHERE Mail = ? AND Mdp = PASSWORD(?)");
         pStmMessage = conn.prepareStatement("SELECT * FROM Messagerie WHERE (IdSender = ? AND IdReceiver = ?) OR (IdSender = ? AND IdReceiver = ?) ORDER BY IdMessage ASC");
+        pStmTousIngredients = conn.prepareStatement("SELECT * FROM Ingredients");
+        pStmAjoutIngr = conn.prepareStatement("INSERT INTO Ingredients (statusCheck, nom) VALUES (0, ?)");
+        pStmUpdateStatus = conn.prepareStatement("UPDATE Ingredients SET statusCheck = ? WHERE idIngredient = ?");
+        pStmUpdateIngr = conn.prepareStatement("UPDATE Ingredients SET nom = ? WHERE idIngredient = ?");
+        pStmDeleteIngr = conn.prepareStatement("DELETE FROM Ingredients WHERE idIngredient = ?");
     }
 
     public Utilisateur inscription(String pseudo, String nom, String prenom, String email, String mdp) {
@@ -90,7 +101,7 @@ public class ConnexionBD {
             pStmMessage.setInt(4, userId);
             ResultSet resultSet = pStmMessage.executeQuery();
             while (resultSet.next()) {
-                Message message = new Message(resultSet.getInt("IdSender"),resultSet.getInt("IdReceiver"),resultSet.getString("Message"),resultSet.getDate("Heure"));
+                Message message = new Message(resultSet.getInt("IdSender"),resultSet.getInt("IdReceiver"),resultSet.getString("Message"),resultSet.getTimestamp("Heure"));
                 messages.add(message);
             }
             return messages;
@@ -112,5 +123,39 @@ public class ConnexionBD {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Ingredient> getTousIngredients() throws SQLException {
+        List<Ingredient> listeIngrs = new ArrayList<Ingredient>();
+        ResultSet res = this.pStmTousIngredients.executeQuery();
+        while (res.next()) {
+            int id = res.getInt("idIngredient");
+            int status = res.getInt("statusCheck");
+            String nom = res.getString("nom");
+            listeIngrs.add(new Ingredient(id, status, nom));
+        }
+        return listeIngrs;
+    }
+
+    public void ajouterIngr(String nom) throws SQLException  {
+        this.pStmAjoutIngr.setString(1, nom);
+        this.pStmAjoutIngr.executeUpdate();
+    }
+
+    public void updateStatusIngr(int status, int idIngredient) throws SQLException {
+        this.pStmUpdateStatus.setInt(1, status);
+        this.pStmUpdateStatus.setInt(2, idIngredient);
+        this.pStmUpdateStatus.executeUpdate();
+    }
+
+    public void updateIngredient(int idIngredient, String nom) throws SQLException {
+        this.pStmUpdateIngr.setString(1, nom);
+        this.pStmUpdateIngr.setInt(2, idIngredient);
+        this.pStmUpdateIngr.executeUpdate();
+    }
+
+    public void deleteIngredient(int idIngredient) throws SQLException {
+        this.pStmDeleteIngr.setInt(1, idIngredient);
+        this.pStmDeleteIngr.executeUpdate();
     }
 }
