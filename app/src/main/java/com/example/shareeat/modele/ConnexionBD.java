@@ -143,6 +143,7 @@ public class ConnexionBD {
     }
 
     public void updateStatusIngr(int status, int idIngredient) throws SQLException {
+        System.out.println("Updating status for ingredient " + idIngredient + " to " + status);
         this.pStmUpdateStatus.setInt(1, status);
         this.pStmUpdateStatus.setInt(2, idIngredient);
         this.pStmUpdateStatus.executeUpdate();

@@ -1,15 +1,17 @@
 package com.example.shareeat;
-import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 
 import com.example.shareeat.adapter.IngrAdapter;
 import com.example.shareeat.modele.ConnexionBD;
@@ -24,14 +26,20 @@ import java.util.Date;
 import java.util.List;
 
 
-public class AddPlatActivity extends Activity {
+public class AddPlatActivity extends AppCompatActivity implements DialogCloseListener{
     ImageView imgP;
     EditText dateAjout;
     FloatingActionButton btnAddPhoto;
     private RecyclerView ingrRecyclerView;
     private IngrAdapter ingrAdapter;
+    Button btnAddIngredient;
 
-    private List<Ingredient> ingredientList;
+    private List<Ingredient> ingredientList = new ArrayList<>();
+
+    public ConnexionBD connBD = new ConnexionBD();
+
+    public AddPlatActivity() throws SQLException, ClassNotFoundException {
+    }
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -39,14 +47,20 @@ public class AddPlatActivity extends Activity {
 
         // Lier le layout à l'activity
         setContentView(R.layout.activity_add_plat);
-
-        ingredientList = new ArrayList<>();
+        getSupportActionBar().hide();
 
         // Obtention des références sur les composants (ressources)
         dateAjout = (EditText) findViewById(R.id.dateFormAjoutPlat);
         imgP = (ImageView) findViewById(R.id.addImgPlat);
         btnAddPhoto = (FloatingActionButton) findViewById(R.id.btnAddPhoto);
+        btnAddIngredient = (Button) findViewById(R.id.btnAddNewIngr);
 
+        // initialisation de la connexion bd
+        try {
+            ingredientList = connBD.getTousIngredients();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         //**************Partie liste des ingrédients ************************************
         ingrRecyclerView = (RecyclerView) findViewById(R.id.listIngrRecyclerView);
 
@@ -56,38 +70,15 @@ public class AddPlatActivity extends Activity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         ingrRecyclerView.setLayoutManager(layoutManager);
 
-        ingrAdapter = new IngrAdapter(this, ingredientList);
+        ingrAdapter = new IngrAdapter(connBD, this, getSupportFragmentManager(), ingredientList);
         ingrRecyclerView.setAdapter(ingrAdapter);
 
-        //Ingredient ingr = new Ingredient();
-        //ingr.setIngr("C'est un ingredient test");
-        //ingr.setStatus(0); // 0 -> false nonchecked, 1 -> true checked
-        //ingr.setId(1);
-
-        try {
-            ConnexionBD connBD = new ConnexionBD();
-            ingredientList = new ConnexionBD().getTousIngredients();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        //ingredientList.add(ingr);
-        //ingredientList.add(ingr);
-        //ingredientList.add(ingr);
-        //ingredientList.add(ingr);
-        //ingredientList.add(ingr);
-        //ingredientList.add(ingr);
-
-        if (ingredientList.isEmpty()) {
-            // La liste d'ingrédients est vide, ajout des logs ou un message de débogage.
-            Log.d("AddPlatActivity", "La liste d'ingrédients est vide.");
-        } else {
-            // La liste d'ingrédients contient des éléments, mise à jour de l'adaptateur.
-            ingrAdapter.setIngredients(ingredientList);
-        }
+        btnAddIngredient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AddNewIngredient.newInstance().show(getSupportFragmentManager(), AddNewIngredient.TAG);
+            }
+        });
         //************** FIN (liste des ingrédients) ************************************
 
         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
@@ -125,4 +116,16 @@ public class AddPlatActivity extends Activity {
         String dateStr = dateFormat.format(dateDuJour);
         dateAjout.setText(dateStr);
     }
+
+    @Override
+    public void handleDialogClose(DialogInterface dialog) {
+        try {
+            ingredientList = connBD.getTousIngredients();
+            ingrAdapter.setIngredients(ingredientList);
+            ingrAdapter.notifyDataSetChanged(); //update le recyclerView
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
