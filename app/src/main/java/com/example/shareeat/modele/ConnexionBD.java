@@ -23,6 +23,7 @@ public class ConnexionBD {
     private PreparedStatement pStmUpdateStatus;
     private PreparedStatement pStmUpdateIngr;
     private PreparedStatement pStmDeleteIngr;
+    private PreparedStatement pStmAddPlat;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -47,6 +48,7 @@ public class ConnexionBD {
         pStmUpdateStatus = conn.prepareStatement("UPDATE Ingredients SET statusCheck = ? WHERE idIngredient = ?");
         pStmUpdateIngr = conn.prepareStatement("UPDATE Ingredients SET nom = ? WHERE idIngredient = ?");
         pStmDeleteIngr = conn.prepareStatement("DELETE FROM Ingredients WHERE idIngredient = ?");
+        pStmAddPlat = conn.prepareStatement("INSERT INTO Recette (IdUtilisateur, Titre, Description, Date, ImageRecette) VALUES (?, ?, ?, ?, ?)");
     }
 
     public Utilisateur inscription(String pseudo, String nom, String prenom, String email, String mdp) {
@@ -158,5 +160,22 @@ public class ConnexionBD {
     public void deleteIngredient(int idIngredient) throws SQLException {
         this.pStmDeleteIngr.setInt(1, idIngredient);
         this.pStmDeleteIngr.executeUpdate();
+    }
+
+    public void ajouterRecette(String titre, String description, String date, String imageUri) throws SQLException {
+        if (titre.isEmpty()) {
+            throw new IllegalArgumentException("Le titre de la recette ne peut pas être vide.");
+        }
+        try {
+            // Remplacez 1 par l'ID de l'utilisateur actuel (à récupérer depuis votre système de connexion utilisateur)
+            pStmAddPlat.setInt(1, 1);
+            pStmAddPlat.setString(2, titre);
+            pStmAddPlat.setString(3, description);
+            pStmAddPlat.setString(4, date);
+            pStmAddPlat.setString(5, imageUri);
+            pStmAddPlat.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

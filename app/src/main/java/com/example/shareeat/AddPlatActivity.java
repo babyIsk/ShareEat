@@ -1,4 +1,5 @@
 package com.example.shareeat;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,10 +31,14 @@ import java.util.List;
 public class AddPlatActivity extends AppCompatActivity implements DialogCloseListener{
     ImageView imgP;
     EditText dateAjout;
+    EditText titreP;
+    EditText descriptionP;
     FloatingActionButton btnAddPhoto;
+    private Uri selectedImageUri;
     private RecyclerView ingrRecyclerView;
     private IngrAdapter ingrAdapter;
     Button btnAddIngredient;
+    Button btnValider;
 
     private List<Ingredient> ingredientList = new ArrayList<>();
 
@@ -53,7 +59,10 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
         dateAjout = (EditText) findViewById(R.id.dateFormAjoutPlat);
         imgP = (ImageView) findViewById(R.id.addImgPlat);
         btnAddPhoto = (FloatingActionButton) findViewById(R.id.btnAddPhoto);
+        titreP = (EditText) findViewById(R.id.titrePlatInput);
+        descriptionP = (EditText) findViewById(R.id.descPlatInput);
         btnAddIngredient = (Button) findViewById(R.id.btnAddNewIngr);
+        btnValider = (Button) findViewById(R.id.btnValider);
 
         // initialisation de la connexion bd
         try {
@@ -61,6 +70,8 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+
         //**************Partie liste des ingrédients ************************************
         ingrRecyclerView = (RecyclerView) findViewById(R.id.listIngrRecyclerView);
 
@@ -92,6 +103,44 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
                         .start();
             }
         });
+
+        btnValider.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    // Récupérer les données du formulaire
+                    String titre = titreP.getText().toString();
+                    String description = descriptionP.getText().toString();
+                    String date = dateAjout.getText().toString();
+                    // Garantit que si selectedImageUri est null, une chaîne vide sera utilisée à la place,
+                    // évitant ainsi la NullPointerException
+                    String imageUri = (selectedImageUri != null) ? selectedImageUri.toString() : "";
+
+                    // Gestion des erreurs
+                    if (selectedImageUri == null) {
+                        showToast("Veuillez sélectionner une image pour votre recette.");
+                        return;
+                    }
+                    if (titre.isEmpty()) {
+                        showToast("Veuillez entrer un titre pour votre recette.");
+                        return; // Sortir de la méthode sans enregistrer si le titre est vide
+                    }
+
+                    // Enregistrement les données dans la table Recette
+                    connBD.ajouterRecette(titre, description, date, imageUri);
+                    showToast("Votre recette a bien été enregistrée et postée !");
+                    // Redirection vers la page d'accueil (MAINACTIVITY POUR LINSTANT MAIS A CHANGER)
+                    startActivity(new Intent(AddPlatActivity.this, MainActivity.class));
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -99,10 +148,14 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Uri uri = data.getData();
-        // L'image sélectionnée par l'utilisateur dans une autre activité (ici la galerie d'images)
-        // est affichée dans la vue image (imgP).
-        imgP.setImageURI(uri);
+        //si le résultat provient bien de l'activité d'image qu'on a lancée et que cette activité s'est terminée avec succès
+        if (resultCode == Activity.RESULT_OK && requestCode == ImagePicker.REQUEST_CODE) {
+            selectedImageUri = data.getData();
+
+            // L'image sélectionnée par l'utilisateur dans une autre activité (ici la galerie d'images)
+            // est affichée dans la vue image (imgP).
+            imgP.setImageURI(selectedImageUri);
+        }
     }
 
     @Override
@@ -117,6 +170,8 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
         dateAjout.setText(dateStr);
     }
 
+
+    //S'occupe de la liste des ingrédients une fois le fragment d'ajout de nouvel ingrédient en bas de la page est fermé
     @Override
     public void handleDialogClose(DialogInterface dialog) {
         try {
