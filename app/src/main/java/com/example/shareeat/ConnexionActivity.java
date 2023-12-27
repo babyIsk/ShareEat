@@ -40,7 +40,7 @@ public class ConnexionActivity extends AppCompatActivity {
         loginButton.setOnClickListener(view -> {
             Utilisateur utilisateur = connexion(emailEditText.getText().toString(), passwordEditText.getText().toString());
             if (utilisateur != null) {
-                Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra("user", utilisateur);
                 startActivity(intent);
                 finish();

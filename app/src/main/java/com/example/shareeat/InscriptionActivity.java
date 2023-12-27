@@ -2,6 +2,7 @@ package com.example.shareeat;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -49,6 +50,9 @@ public class InscriptionActivity extends AppCompatActivity {
                 Toast.makeText(InscriptionActivity.this, "Les emails ne sont pas identique", Toast.LENGTH_SHORT).show();
             } else if (inscription(pseudoEditText.getText().toString(), nomEditText.getText().toString(), prenomEditText.getText().toString(), emailEditText.getText().toString(), mdpEditText.getText().toString())) {
                 Toast.makeText(InscriptionActivity.this, "inscription réussite", Toast.LENGTH_SHORT).show();
+                // Redirection vers l'accueil
+                Intent intent = new Intent(InscriptionActivity.this, MainActivity.class);
+                startActivity(intent);
                 finish();
             }
 
