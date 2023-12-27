@@ -129,7 +129,7 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
                     // Enregistrement les données dans la table Recette
                     connBD.ajouterRecette(titre, description, date, imageUri);
                     showToast("Votre recette a bien été enregistrée et postée !");
-                    // Redirection vers la page d'accueil (MAINACTIVITY POUR LINSTANT MAIS A CHANGER)
+                    // Redirection vers la page d'accueil (MAINACTIVITY)
                     startActivity(new Intent(AddPlatActivity.this, MainActivity.class));
 
                 } catch (SQLException e) {

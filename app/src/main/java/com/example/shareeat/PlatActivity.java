@@ -9,6 +9,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -19,7 +21,7 @@ public class PlatActivity extends Activity {
     TextView txtTitreP;
     TextView txtDescriptionP;
     TextView txtIngredients;
-    ListView listIngredients;
+    RecyclerView listIngredients;
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +35,7 @@ public class PlatActivity extends Activity {
         imgP = (ImageView) findViewById(R.id.imgPlat);
         dateAjout = (EditText) findViewById(R.id.dateAjoutPlat);
         txtIngredients = (TextView) findViewById(R.id.ingredientsLabel);
-        listIngredients = (ListView) findViewById(R.id.ingredientsList);
+        listIngredients = (RecyclerView) findViewById(R.id.ingredientsList);
     }
 
     @Override
@@ -51,7 +53,7 @@ public class PlatActivity extends Activity {
 
         String[] ingredients = {"Burrata", "Tomate", "Huile d'olive"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ingredients);
-        listIngredients.setAdapter(adapter);
+        //listIngredients.setAdapter(adapter);
 
         // Obtenir la date actuelle
         Date dateDuJour = new Date();

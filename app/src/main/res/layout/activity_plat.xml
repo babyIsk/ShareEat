@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PlatActivity">
-
-    <ListView
-        android:id="@+id/ingredientsList"
-        android:layout_width="345dp"
-        android:layout_height="260dp"
-        android:layout_marginStart="83dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="82dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ingredientsLabel"
-        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/titrePlat"
@@ -103,4 +92,29 @@
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/plat_img"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ingredientsList"
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ingredientsLabel"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/ingredientsList"
+        app:layout_constraintEnd_toEndOf="@+id/ingredientsList"
+        app:layout_constraintStart_toStartOf="@+id/ingredientsList"
+        app:layout_constraintTop_toTopOf="@+id/ingredientsList"
+        tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
