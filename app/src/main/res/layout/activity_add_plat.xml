@@ -35,7 +35,6 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/addImgPlat"
-        style="@style/carre"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:background="@color/rouge_shareeat_transparent"

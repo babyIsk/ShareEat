@@ -1,11 +1,16 @@
 package com.example.shareeat.modele;
 
+import java.util.Date;
+
 public class Plat {
     int idP;
     int idUtilisateur;
     String titreP;
     String descriptionP;
     String[] ingrédients;
+
+    String date;
+    String imgRecette;
 
     public int getIdP() {
         return idP;
@@ -39,4 +44,25 @@ public class Plat {
     public void setIngrédients(String[] ingrédients) {
         this.ingrédients = ingrédients;
     }
+
+    public void setIdUtilisateur(int idUtilisateur) {
+        this.idUtilisateur = idUtilisateur;
+    }
+    public String getImageUrl() {
+        return imgRecette;
+    }
+    public void setImgRecette(String imageRecette) {
+        this.imgRecette = imageRecette;
+    }
+
+    public String getDate() {
+        return date;
+    }
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+
+
+
 }

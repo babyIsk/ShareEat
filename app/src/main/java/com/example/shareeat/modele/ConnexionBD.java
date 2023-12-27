@@ -24,6 +24,7 @@ public class ConnexionBD {
     private PreparedStatement pStmUpdateIngr;
     private PreparedStatement pStmDeleteIngr;
     private PreparedStatement pStmAddPlat;
+    private PreparedStatement pStmRecette;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -49,6 +50,7 @@ public class ConnexionBD {
         pStmUpdateIngr = conn.prepareStatement("UPDATE Ingredients SET nom = ? WHERE idIngredient = ?");
         pStmDeleteIngr = conn.prepareStatement("DELETE FROM Ingredients WHERE idIngredient = ?");
         pStmAddPlat = conn.prepareStatement("INSERT INTO Recette (IdUtilisateur, Titre, Description, Date, ImageRecette) VALUES (?, ?, ?, ?, ?)");
+        pStmRecette = conn.prepareStatement("SELECT * FROM Recette WHERE IdRecette = ?");
     }
 
     public Utilisateur inscription(String pseudo, String nom, String prenom, String email, String mdp) {
@@ -163,9 +165,6 @@ public class ConnexionBD {
     }
 
     public void ajouterRecette(String titre, String description, String date, String imageUri) throws SQLException {
-        if (titre.isEmpty()) {
-            throw new IllegalArgumentException("Le titre de la recette ne peut pas être vide.");
-        }
         try {
             // Remplacez 1 par l'ID de l'utilisateur actuel (à récupérer depuis votre système de connexion utilisateur)
             pStmAddPlat.setInt(1, 1);
@@ -177,5 +176,34 @@ public class ConnexionBD {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Plat getRecetteById(int idP) {
+            try {
+                pStmRecette.setInt(1, idP);
+
+                ResultSet res = this.pStmRecette.executeQuery();
+                if (res.next()) {
+                    // Récupérer les données de la ligne
+                    int idUtilisateur = res.getInt("IdUtilisateur");
+                    String titre = res.getString("Titre");
+                    String description = res.getString("Description");
+                    String date = res.getString("Date");
+                    String imageRecette = res.getString("ImageRecette");
+
+                    // Créer et retourner un objet Recette avec les données récupérées
+                    Plat plat = new Plat();
+                    plat.setIdP(idP);
+                    plat.setIdUtilisateur(idUtilisateur);
+                    plat.setTitreP(titre);
+                    plat.setDescriptionP(description);
+                    plat.setDate(date);
+                    plat.setImgRecette(imageRecette);
+                    return plat;
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        return null; // en cas d'erreur ou si aucune recette n'est trouvée
     }
 }
