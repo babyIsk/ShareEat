@@ -1,7 +1,5 @@
 package com.example.shareeat.modele;
 
-import java.util.Date;
-
 public class Plat {
     int idP;
     int idUtilisateur;

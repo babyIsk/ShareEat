@@ -18,10 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.shareeat.adapter.IngrAdapter;
 import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.Ingredient;
+import com.example.shareeat.modele.Utilisateur;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -97,7 +99,7 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
             // Utilisation de la librairie ImagePicker
             public void onClick(View view) {
                 ImagePicker.with(AddPlatActivity.this)
-                        .crop()	    			//Crop image(Optional), Check Customization for more option
+                        .cropSquare()	//Crop square image, its same as crop(1f, 1f) : ratio 1:1
                         .compress(1024)			//Final image size will be less than 1 MB(Optional)
                         .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
                         .start();
@@ -107,39 +109,56 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
         btnValider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    // Récupérer les données du formulaire
-                    String titre = titreP.getText().toString();
-                    String description = descriptionP.getText().toString();
-                    String date = dateAjout.getText().toString();
-                    // Garantit que si selectedImageUri est null, une chaîne vide sera utilisée à la place,
-                    // évitant ainsi la NullPointerException
-                    String imageUri = (selectedImageUri != null) ? selectedImageUri.toString() : "";
+                // Récupérer les données du formulaire
+                String titre = titreP.getText().toString();
+                String description = descriptionP.getText().toString();
 
-                    // Gestion des erreurs
-                    if (selectedImageUri == null) {
-                        showToast("Veuillez sélectionner une image pour votre recette.");
-                        return;
-                    }
-                    if (titre.isEmpty()) {
-                        showToast("Veuillez entrer un titre pour votre recette.");
-                        return; // Sortir de la méthode sans enregistrer si le titre est vide
-                    }
+                String date = dateAjout.getText().toString();
+                // Formater la date dans le format attendu par la méthode ajouterRecette
+                SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+                // Garantit que si selectedImageUri est null, une chaîne vide sera utilisée à la place,
+                // évitant ainsi la NullPointerException
+                String imageUri = (selectedImageUri != null) ? selectedImageUri.toString() : "";
+
+                // Récupérer l'objet Utilisateur depuis l'intent
+                Utilisateur utilisateur = (Utilisateur) getIntent().getSerializableExtra("user");
+
+                // Gestion des erreurs
+                if (selectedImageUri == null) {
+                    showToast("Veuillez sélectionner une image pour votre recette.");
+                    return;
+                } else if (titre.isEmpty()) {
+                    showToast("Veuillez entrer un titre pour votre recette.");
+                    return; // Sortir de la méthode sans enregistrer si le titre est vide
+                } else if (utilisateur != null) {
+                    int idUtilisateur = utilisateur.getIdUtilisateur();
 
                     // Enregistrement les données dans la table Recette
-                    connBD.ajouterRecette(titre, description, date, imageUri);
-                    showToast("Votre recette a bien été enregistrée et postée !");
-                    // Redirection vers la page d'accueil (MAINACTIVITY)
-                    startActivity(new Intent(AddPlatActivity.this, MainActivity.class));
+                    try {
+                        Date parsedDate = inputFormat.parse(date);
+                        String formattedDate = outputFormat.format(parsedDate);
 
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                        connBD.ajouterRecette(idUtilisateur, titre, description, formattedDate, imageUri);
+                    } catch (SQLException | ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    showToast("Votre recette a bien été enregistrée et postée !");
+                    // Redirection vers PlatActivity en passant l'ID de la recette comme extra
+                    int newRecipeId = connBD.getLatestRecipeId();
+                    Intent intent = new Intent(AddPlatActivity.this, PlatActivity.class);
+                    intent.putExtra("postId", newRecipeId);
+                    startActivity(intent);
+                } else {
+                    showToast("Problème d'idUtilisateur");
                 }
             }
         });
     }
 
-    private void showToast(String message) {
+    public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 

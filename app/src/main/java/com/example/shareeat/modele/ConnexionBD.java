@@ -1,12 +1,17 @@
 package com.example.shareeat.modele;
 
 import android.os.StrictMode;
+import android.util.Log;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ConnexionBD {
@@ -25,6 +30,7 @@ public class ConnexionBD {
     private PreparedStatement pStmDeleteIngr;
     private PreparedStatement pStmAddPlat;
     private PreparedStatement pStmRecette;
+    private PreparedStatement pStmGetLatestRecipeId;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -51,6 +57,7 @@ public class ConnexionBD {
         pStmDeleteIngr = conn.prepareStatement("DELETE FROM Ingredients WHERE idIngredient = ?");
         pStmAddPlat = conn.prepareStatement("INSERT INTO Recette (IdUtilisateur, Titre, Description, Date, ImageRecette) VALUES (?, ?, ?, ?, ?)");
         pStmRecette = conn.prepareStatement("SELECT * FROM Recette WHERE IdRecette = ?");
+        pStmGetLatestRecipeId = conn.prepareStatement("SELECT LAST_INSERT_ID() AS LatestRecipeId");
     }
 
     public Utilisateur inscription(String pseudo, String nom, String prenom, String email, String mdp) {
@@ -164,16 +171,26 @@ public class ConnexionBD {
         this.pStmDeleteIngr.executeUpdate();
     }
 
-    public void ajouterRecette(String titre, String description, String date, String imageUri) throws SQLException {
+    public void ajouterRecette(int idUtilisateur, String titre, String description, String date, String imageUri) throws SQLException {
         try {
-            // Remplacez 1 par l'ID de l'utilisateur actuel (à récupérer depuis votre système de connexion utilisateur)
-            pStmAddPlat.setInt(1, 1);
+            Log.d("ConnexionBD", "Ajout de recette - ID utilisateur : " + idUtilisateur);
+            pStmAddPlat.setInt(1, idUtilisateur);
             pStmAddPlat.setString(2, titre);
             pStmAddPlat.setString(3, description);
-            pStmAddPlat.setString(4, date);
+
+            // Formater la date dans le format attendu par la base de données
+            SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            Date parsedDate = inputFormat.parse(date);
+            String formattedDate = outputFormat.format(parsedDate);
+
+            pStmAddPlat.setString(4, formattedDate);
             pStmAddPlat.setString(5, imageUri);
             pStmAddPlat.executeUpdate();
-        } catch (SQLException e) {
+            Log.d("ConnexionBD", "Recette ajoutée avec succès !");
+        } catch (SQLException | ParseException e) {
+            Log.e("ConnexionBD", "Erreur lors de l'ajout de la recette : " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -205,5 +222,21 @@ public class ConnexionBD {
                 throw new RuntimeException(ex);
             }
         return null; // en cas d'erreur ou si aucune recette n'est trouvée
+    }
+
+    public int getLatestRecipeId() {
+        int latestRecipeId = -1;
+
+        try {
+            ResultSet res = this.pStmGetLatestRecipeId.executeQuery();
+            if (res.next()) {
+                latestRecipeId = res.getInt("LatestRecipeId");
+            }
+            pStmGetLatestRecipeId.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return latestRecipeId;
     }
 }
