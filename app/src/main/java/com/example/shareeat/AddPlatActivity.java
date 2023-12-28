@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.shareeat.adapter.IngrAdapter;
 import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.Ingredient;
+import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -122,8 +123,8 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
                 // évitant ainsi la NullPointerException
                 String imageUri = (selectedImageUri != null) ? selectedImageUri.toString() : "";
 
-                // Récupérer l'objet Utilisateur depuis l'intent
-                Utilisateur utilisateur = (Utilisateur) getIntent().getSerializableExtra("user");
+                // Récupérer l'objet Utilisateur depuis UserDataSingleton
+                Utilisateur utilisateur = UserDataSingleton.getInstance().getUtilisateur();
 
                 // Gestion des erreurs
                 if (selectedImageUri == null) {

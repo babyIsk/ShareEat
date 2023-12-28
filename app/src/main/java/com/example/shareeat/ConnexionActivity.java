@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.service.autofill.UserData;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shareeat.modele.ConnexionBD;
+import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
 
 import java.sql.SQLException;
@@ -40,10 +42,18 @@ public class ConnexionActivity extends AppCompatActivity {
         loginButton.setOnClickListener(view -> {
             Utilisateur utilisateur = connexion(emailEditText.getText().toString(), passwordEditText.getText().toString());
             if (utilisateur != null) {
-                Intent intent = new Intent(getApplicationContext(), AddPlatActivity.class);
-                intent.putExtra("user", utilisateur);
+                // Stocker l'utilisateur dans la classe UserData
+                UserDataSingleton.getInstance().setUtilisateur(utilisateur);
+
+                // Naviguer vers l'activité suivante
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 finish();
+
+                //Intent intent = new Intent(getApplicationContext(), AddPlatActivity.class);
+                //intent.putExtra("user", utilisateur);
+                //startActivity(intent);
+                //finish();
             } else {
                 Toast.makeText(ConnexionActivity.this, "Connexion impossible veuillez vérifier votre eamil ou votre mot de passe", Toast.LENGTH_SHORT).show();
             }

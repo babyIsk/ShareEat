@@ -11,6 +11,7 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.shareeat.modele.ConnexionBD;
+import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
 
 import java.sql.SQLException;
@@ -51,7 +52,7 @@ public class InscriptionActivity extends AppCompatActivity {
             } else if (inscription(pseudoEditText.getText().toString(), nomEditText.getText().toString(), prenomEditText.getText().toString(), emailEditText.getText().toString(), mdpEditText.getText().toString())) {
                 Toast.makeText(InscriptionActivity.this, "inscription réussite", Toast.LENGTH_SHORT).show();
                 // Redirection vers l'accueil
-                Intent intent = new Intent(InscriptionActivity.this, MainActivity.class);
+                Intent intent = new Intent(InscriptionActivity.this, ConnexionActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -96,8 +97,12 @@ public class InscriptionActivity extends AppCompatActivity {
     public boolean inscription(String pseudo, String nom, String prenom, String email, String mdp) {
         try {
             ConnexionBD bd = new ConnexionBD();
-            if (bd.inscription(pseudo, nom, prenom, email, mdp) != null)
+            Utilisateur utilisateur = bd.inscription(pseudo, nom, prenom, email, mdp);
+            if (utilisateur != null) {
+                // Stocker l'utilisateur dans le singleton UserDataSingleton
+                UserDataSingleton.getInstance().setUtilisateur(utilisateur);
                 return true;
+            }
         } catch (SQLException | ClassNotFoundException e) {
             Toast.makeText(InscriptionActivity.this, "Erreur de connexion impossible de proceder a l'inscription ", Toast.LENGTH_SHORT).show();
             e.printStackTrace();

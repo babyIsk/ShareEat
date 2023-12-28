@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.Message;
 import com.example.shareeat.modele.MessageAdapter;
+import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
 
 import java.sql.SQLException;
@@ -39,8 +40,9 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message);
         getSupportActionBar().hide();
 
-
-        user = (Utilisateur) getIntent().getSerializableExtra("user");
+        // Récupérer l'utilisateur à partir du singleton
+        user = UserDataSingleton.getInstance().getUtilisateur();
+        //user = (Utilisateur) getIntent().getSerializableExtra("user");
         //contact = (Utilisateur) getIntent().getSerializableExtra("contact");
         if(user.getIdUtilisateur() == 1){
             contact = new Utilisateur(2,"Florent","Lelion","iprisc","lelifflo@gmail.com","ihatese");

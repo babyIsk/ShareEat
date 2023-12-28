@@ -99,43 +99,4 @@ public class PlatActivity extends Activity {
             loading.setVisibility(View.GONE);
         }
     }
-
-    @Override
-    protected void onStart () {
-        super.onStart();
-    }
-    @Override
-    protected void onResume () {
-        super.onResume();
-
-        //String titre = "Burrata du chef";
-        //txtTitreP.setText(titre);
-        //String resume = "Magnifique plat/entrée d'origine italienne !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-        //txtDescriptionP.setText(resume);
-
-        //String[] ingredients = {"Burrata", "Tomate", "Huile d'olive"};
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ingredients);
-        //listIngredients.setAdapter(adapter);
-
-        // Obtenir la date actuelle
-        //Date dateDuJour = new Date();
-        // Formater la date pour l'afficher dans le champ dateAjout
-        //SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        //String dateStr = dateFormat.format(dateDuJour);
-        //dateAjout.setText(dateStr);
-    }
-    @Override
-    protected void onPause () {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop () {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy () {
-        super.onDestroy();
-    }
 }
