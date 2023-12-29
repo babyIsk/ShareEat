@@ -45,9 +45,9 @@ public class MessageActivity extends AppCompatActivity {
         //user = (Utilisateur) getIntent().getSerializableExtra("user");
         //contact = (Utilisateur) getIntent().getSerializableExtra("contact");
         if(user.getIdUtilisateur() == 1){
-            contact = new Utilisateur(2,"Florent","Lelion","iprisc","lelifflo@gmail.com","ihatese");
+            contact = new Utilisateur(2,"Florent","Lelion","iprisc","lelifflo@gmail.com","ihatese", null, null);
         }else{
-            contact = new Utilisateur(1,"Calliclès","Bazolo","calli77","calliclesbazolo@gmail.com","ilovese");
+            contact = new Utilisateur(1,"Calliclès","Bazolo","calli77","calliclesbazolo@gmail.com","ilovese", null, null);
         }
 
         // Initialise la liste des messages et l'adaptateur
