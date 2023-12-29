@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
     <Button
         android:id="@+id/btnModifier"
         android:layout_width="82dp"
@@ -45,7 +44,6 @@
         android:clickable="true"
         android:contentDescription="TODO"
         android:visibility="gone"
-
         app:fabCustomSize="37dp"
         app:layout_constraintBottom_toBottomOf="@+id/imgProfil"
         app:layout_constraintEnd_toEndOf="@+id/imgProfil"
@@ -120,9 +118,6 @@
         app:layout_constraintStart_toEndOf="@+id/imgProfil"
         app:layout_constraintTop_toBottomOf="@+id/tvUserName" />
 
-
-
-
     <View
         android:id="@+id/dividerProfil"
         android:layout_width="match_parent"
@@ -135,11 +130,152 @@
         app:layout_constraintTop_toBottomOf="@+id/tvUserBio"
         app:layout_constraintVertical_bias="0.044" />
 
+    <ImageButton
+        android:id="@+id/btnFlecheRetour"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:background="@null"
+        android:onClick="previousMonthAction"
+        android:src="@drawable/fleche_retour_precedent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dividerProfil" />
+
+    <TextView
+        android:id="@+id/tvMoisAnnee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Janvier 2024"
+        android:textColor="@color/jaune_shareeat"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/btnFlecheSuivant"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toEndOf="@+id/btnFlecheRetour"
+        app:layout_constraintTop_toBottomOf="@+id/dividerProfil" />
+
+    <ImageButton
+        android:id="@+id/btnFlecheSuivant"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:background="@null"
+        android:onClick="nextMonthAction"
+        android:src="@drawable/fleche_suivant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dividerProfil" />
+
+    <TextView
+        android:id="@+id/tvLundi"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="28dp"
+        android:text="LUN"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/galeryRecyclerView"
+        app:layout_constraintEnd_toStartOf="@+id/tvMardi"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvMoisAnnee"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <TextView
+        android:id="@+id/tvMardi"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="16dp"
+        android:text="MAR"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/galeryRecyclerView"
+        app:layout_constraintEnd_toStartOf="@+id/tvMercredi"
+        app:layout_constraintTop_toBottomOf="@+id/tvMoisAnnee"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <TextView
+        android:id="@+id/tvMercredi"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="MER"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/galeryRecyclerView"
+        app:layout_constraintEnd_toStartOf="@+id/tvJeudi"
+        app:layout_constraintTop_toBottomOf="@+id/tvMoisAnnee"
+        app:layout_constraintVertical_bias="0.534" />
+
+    <TextView
+        android:id="@+id/tvJeudi"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="JEU"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/galeryRecyclerView"
+        app:layout_constraintEnd_toStartOf="@+id/tvVendredi"
+        app:layout_constraintTop_toBottomOf="@+id/tvMoisAnnee"
+        app:layout_constraintVertical_bias="0.534" />
+
+    <TextView
+        android:id="@+id/tvVendredi"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="VEN"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/galeryRecyclerView"
+        app:layout_constraintEnd_toStartOf="@+id/tvSamedi"
+        app:layout_constraintTop_toBottomOf="@+id/tvMoisAnnee"
+        app:layout_constraintVertical_bias="0.534" />
+
+    <TextView
+        android:id="@+id/tvSamedi"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="SAM"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/galeryRecyclerView"
+        app:layout_constraintEnd_toStartOf="@+id/tvDimanche"
+        app:layout_constraintTop_toBottomOf="@+id/tvMoisAnnee"
+        app:layout_constraintVertical_bias="0.534" />
+
+    <TextView
+        android:id="@+id/tvDimanche"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="DIM"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/galeryRecyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvMoisAnnee"
+        app:layout_constraintVertical_bias="0.534" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/galeryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="124dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

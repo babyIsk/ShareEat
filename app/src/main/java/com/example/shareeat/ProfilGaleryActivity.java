@@ -184,18 +184,13 @@ public class ProfilGaleryActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //si le résultat provient bien de l'activité d'image qu'on a lancée et que cette activité s'est terminée avec succès
         if (resultCode == Activity.RESULT_OK && requestCode == ImagePicker.REQUEST_CODE) {
             selectedImageUri = data.getData();
 
-            // L'image sélectionnée par l'utilisateur dans une autre activité (ici la galerie d'images)
-            // est affichée dans la vue image (imgP).
             imgProfil.setImageURI(selectedImageUri);
         }
     }
-
-
-
+    
     private void initRecyclerView() {
         galeryAdapter = new GaleryAdapter();
 
