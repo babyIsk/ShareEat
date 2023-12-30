@@ -35,7 +35,16 @@ public class GaleryAdapter extends RecyclerView.Adapter<GaleryAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull GaleryAdapter.ViewHolder holder, int position) {
-        holder.dayOfMonth.setText(daysOfMonth.get(position));
+        String dayText = daysOfMonth.get(position);
+
+        // Vérifiez si la valeur de dayText est une chaîne vide
+        if (!dayText.isEmpty()) {
+            holder.dayOfMonth.setText(dayText);
+            holder.itemView.setVisibility(View.VISIBLE);
+        } else {
+            // Si c'est une chaîne vide
+            holder.itemView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -61,5 +70,3 @@ public class GaleryAdapter extends RecyclerView.Adapter<GaleryAdapter.ViewHolder
         }
     }
 }
-
-

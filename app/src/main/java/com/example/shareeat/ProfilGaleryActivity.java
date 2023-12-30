@@ -44,10 +44,10 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
     ImageButton btnFlecheRetour, btnFlecheSuivant;
     FloatingActionButton btnAddPhoto;
     private Uri selectedImageUri;
-
     TextView tvMoisAnnee;
     private RecyclerView galeryRecyclerView;
     private Calendar selectedDate;
+    private ArrayList<String> daysInMonth;
     private GaleryAdapter galeryAdapter;
     public ConnexionBD connBD;
 
@@ -181,9 +181,8 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
     }
 
     private void setMonthView() {
-        selectedDate = Calendar.getInstance(); // Réinitialiser la date actuelle
         tvMoisAnnee.setText(monthYearFromDate(selectedDate));
-        ArrayList<String> daysInMonth = daysInMonthArray(selectedDate);
+        daysInMonth = daysInMonthArray(selectedDate);
 
         Log.d("ProfilGaleryActivity", "Days in Month: " + TextUtils.join(", ", daysInMonth));
 
@@ -209,14 +208,6 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
         for (int i = 1; i <= daysInMonth; i++) {
             daysInMonthArray.add(String.valueOf(i));
         }
-
-        //for (int i =1; i <= 42; i++) {
-            //if (i < dayOfWeek || i > daysInMonth + dayOfWeek) {
-                //daysInMonthArray.add("");
-            //} else {
-                //daysInMonthArray.add(String.valueOf(i - dayOfWeek));
-            //}
-        //}
 
         return daysInMonthArray;
     }
