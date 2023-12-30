@@ -7,13 +7,15 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,17 +27,27 @@ import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
-import java.sql.SQLException;
+import org.w3c.dom.Text;
 
-public class ProfilGaleryActivity extends AppCompatActivity {
+import java.sql.SQLException;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class ProfilGaleryActivity extends AppCompatActivity implements OnItemListener {
 
     ImageView imgProfil;
     EditText userNameInput, userPseudoInput, userBioInput;
     View dividerProfil;
     Button btnModifier, btnEnregistrer, btnDeconnexion;
+    ImageButton btnFlecheRetour, btnFlecheSuivant;
     FloatingActionButton btnAddPhoto;
     private Uri selectedImageUri;
+
+    TextView tvMoisAnnee;
     private RecyclerView galeryRecyclerView;
+    private Calendar selectedDate;
     private GaleryAdapter galeryAdapter;
     public ConnexionBD connBD;
 
@@ -56,6 +68,9 @@ public class ProfilGaleryActivity extends AppCompatActivity {
         btnEnregistrer = (Button) findViewById(R.id.btnEnregistrer);
         btnDeconnexion = (Button) findViewById(R.id.btnDeconnexion);
         galeryRecyclerView = (RecyclerView) findViewById(R.id.galeryRecyclerView);
+        tvMoisAnnee = (TextView) findViewById(R.id.tvMoisAnnee);
+        btnFlecheRetour = (ImageButton) findViewById(R.id.btnFlecheRetour);
+        btnFlecheSuivant = (ImageButton) findViewById(R.id.btnFlecheSuivant);
 
         try {
             connBD = new ConnexionBD();
@@ -146,8 +161,92 @@ public class ProfilGaleryActivity extends AppCompatActivity {
             }
         });
 
-        initRecyclerView();
+        // *******************PARTIE CALENDRIER / GALERIE******************************************
+        selectedDate = Calendar.getInstance();
+        Log.d("ProfilGaleryActivity", "Selected date initialized: " + selectedDate.getTime());
+        setMonthView();
+        Log.d("ProfilGaleryActivity", "Month view set for date: " + selectedDate.getTime());
+        btnFlecheRetour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                previousMonthAction(v);
+            }
+        });
+        btnFlecheSuivant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nextMonthAction(v);
+            }
+        });
     }
+
+    private void setMonthView() {
+        selectedDate = Calendar.getInstance(); // Réinitialiser la date actuelle
+        tvMoisAnnee.setText(monthYearFromDate(selectedDate));
+        ArrayList<String> daysInMonth = daysInMonthArray(selectedDate);
+
+        Log.d("ProfilGaleryActivity", "Days in Month: " + TextUtils.join(", ", daysInMonth));
+
+        galeryAdapter = new GaleryAdapter(daysInMonth, this);
+        RecyclerView.LayoutManager layoutManager= new GridLayoutManager(getApplicationContext(), 7);
+        galeryRecyclerView.setLayoutManager(layoutManager);
+        galeryRecyclerView.setAdapter(galeryAdapter);
+        galeryAdapter.notifyDataSetChanged();
+    }
+
+    private ArrayList<String> daysInMonthArray(Calendar  date) {
+        ArrayList<String> daysInMonthArray = new ArrayList<>();
+
+        int daysInMonth = date.getActualMaximum(Calendar.DAY_OF_MONTH);
+        date.set(Calendar.DAY_OF_MONTH, 1);
+        int dayOfWeek = date.get(Calendar.DAY_OF_WEEK);
+
+        // Ajoutez des espaces vides pour les jours avant le premier jour du mois
+        for (int i = 2; i < dayOfWeek; i++) {
+            daysInMonthArray.add("");
+        }
+
+        for (int i = 1; i <= daysInMonth; i++) {
+            daysInMonthArray.add(String.valueOf(i));
+        }
+
+        //for (int i =1; i <= 42; i++) {
+            //if (i < dayOfWeek || i > daysInMonth + dayOfWeek) {
+                //daysInMonthArray.add("");
+            //} else {
+                //daysInMonthArray.add(String.valueOf(i - dayOfWeek));
+            //}
+        //}
+
+        return daysInMonthArray;
+    }
+
+    private String monthYearFromDate(Calendar date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MMMM yyyy");
+        String result = formatter.format(date.getTime());
+        Log.d("MonthYearFromDate", "Result: " + result);
+        return result;
+    }
+
+    public void previousMonthAction(View view) {
+        Log.d("ProfilGaleryActivity", "Previous Month Clicked");
+        selectedDate.add(Calendar.MONTH, -1);
+        setMonthView();
+        galeryAdapter.notifyDataSetChanged();
+    }
+
+    public void nextMonthAction(View view) {
+        Log.d("ProfilGaleryActivity", "Next Month Clicked");
+        selectedDate.add(Calendar.MONTH, 1);
+        setMonthView();
+    }
+
+    @Override
+    public void onItemClick(int position, String dayText) {
+        if (dayText.equals("")) {
+            showToast("Selected date : " + dayText + " " + monthYearFromDate(selectedDate));
+        }
+    } //******************** FIN PARTIE CALENDRIER / GALERIE***************************************
 
     private void updateUI(Utilisateur user) {
         if (user != null) {
@@ -189,15 +288,5 @@ public class ProfilGaleryActivity extends AppCompatActivity {
 
             imgProfil.setImageURI(selectedImageUri);
         }
-    }
-    
-    private void initRecyclerView() {
-        galeryAdapter = new GaleryAdapter();
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        galeryRecyclerView.setLayoutManager(layoutManager);
-
-        // Attribuer l'adaptateur à la RecyclerView
-        galeryRecyclerView.setAdapter(galeryAdapter);
     }
 }

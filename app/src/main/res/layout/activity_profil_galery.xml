@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <Button
         android:id="@+id/btnModifier"
@@ -207,6 +211,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="MER"
+        android:layout_marginTop="23dp"
         android:textAlignment="center"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -221,6 +226,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="JEU"
+        android:layout_marginTop="23dp"
         android:textAlignment="center"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -235,6 +241,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="VEN"
+        android:layout_marginTop="23dp"
         android:textAlignment="center"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -249,6 +256,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="SAM"
+        android:layout_marginTop="23dp"
         android:textAlignment="center"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -263,6 +271,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="DIM"
+        android:layout_marginTop="23dp"
         android:textAlignment="center"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -274,8 +283,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/galeryRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="124dp"
+        android:layout_height="400dp"
+        android:paddingHorizontal="5dp"
+        android:layout_marginTop="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -289,6 +299,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/add_btn_border_gray"
         android:padding="15dp"
+        android:layout_marginTop="20dp"
         android:text="Déconnexion"
         android:textAllCaps="false"
         android:textColor="@color/rouge_shareeat"
@@ -298,6 +309,7 @@
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/galeryRecyclerView"
-        app:layout_constraintVertical_bias="0.806" />
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
