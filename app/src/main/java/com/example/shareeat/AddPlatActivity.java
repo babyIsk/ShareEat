@@ -1,37 +1,54 @@
 package com.example.shareeat;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 
 import com.example.shareeat.adapter.IngrAdapter;
 import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.Ingredient;
+import com.example.shareeat.modele.UserDataSingleton;
+import com.example.shareeat.modele.Utilisateur;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
-public class AddPlatActivity extends Activity {
+public class AddPlatActivity extends AppCompatActivity implements DialogCloseListener{
     ImageView imgP;
     EditText dateAjout;
+    EditText titreP;
+    EditText descriptionP;
     FloatingActionButton btnAddPhoto;
+    private Uri selectedImageUri;
     private RecyclerView ingrRecyclerView;
     private IngrAdapter ingrAdapter;
+    Button btnAddIngredient;
+    Button btnValider;
 
-    private List<Ingredient> ingredientList;
+    private List<Ingredient> ingredientList = new ArrayList<>();
+
+    public ConnexionBD connBD = new ConnexionBD();
+
+    public AddPlatActivity() throws SQLException, ClassNotFoundException {
+    }
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -39,13 +56,24 @@ public class AddPlatActivity extends Activity {
 
         // Lier le layout à l'activity
         setContentView(R.layout.activity_add_plat);
-
-        ingredientList = new ArrayList<>();
+        getSupportActionBar().hide();
 
         // Obtention des références sur les composants (ressources)
         dateAjout = (EditText) findViewById(R.id.dateFormAjoutPlat);
         imgP = (ImageView) findViewById(R.id.addImgPlat);
         btnAddPhoto = (FloatingActionButton) findViewById(R.id.btnAddPhoto);
+        titreP = (EditText) findViewById(R.id.titrePlatInput);
+        descriptionP = (EditText) findViewById(R.id.descPlatInput);
+        btnAddIngredient = (Button) findViewById(R.id.btnAddNewIngr);
+        btnValider = (Button) findViewById(R.id.btnValider);
+
+        // initialisation de la connexion bd
+        try {
+            ingredientList = connBD.getTousIngredients();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
 
         //**************Partie liste des ingrédients ************************************
         ingrRecyclerView = (RecyclerView) findViewById(R.id.listIngrRecyclerView);
@@ -56,38 +84,15 @@ public class AddPlatActivity extends Activity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         ingrRecyclerView.setLayoutManager(layoutManager);
 
-        ingrAdapter = new IngrAdapter(this, ingredientList);
+        ingrAdapter = new IngrAdapter(connBD, this, getSupportFragmentManager(), ingredientList);
         ingrRecyclerView.setAdapter(ingrAdapter);
 
-        //Ingredient ingr = new Ingredient();
-        //ingr.setIngr("C'est un ingredient test");
-        //ingr.setStatus(0); // 0 -> false nonchecked, 1 -> true checked
-        //ingr.setId(1);
-
-        try {
-            ConnexionBD connBD = new ConnexionBD();
-            ingredientList = new ConnexionBD().getTousIngredients();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        //ingredientList.add(ingr);
-        //ingredientList.add(ingr);
-        //ingredientList.add(ingr);
-        //ingredientList.add(ingr);
-        //ingredientList.add(ingr);
-        //ingredientList.add(ingr);
-
-        if (ingredientList.isEmpty()) {
-            // La liste d'ingrédients est vide, ajout des logs ou un message de débogage.
-            Log.d("AddPlatActivity", "La liste d'ingrédients est vide.");
-        } else {
-            // La liste d'ingrédients contient des éléments, mise à jour de l'adaptateur.
-            ingrAdapter.setIngredients(ingredientList);
-        }
+        btnAddIngredient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AddNewIngredient.newInstance().show(getSupportFragmentManager(), AddNewIngredient.TAG);
+            }
+        });
         //************** FIN (liste des ingrédients) ************************************
 
         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
@@ -95,12 +100,67 @@ public class AddPlatActivity extends Activity {
             // Utilisation de la librairie ImagePicker
             public void onClick(View view) {
                 ImagePicker.with(AddPlatActivity.this)
-                        .crop()	    			//Crop image(Optional), Check Customization for more option
+                        .cropSquare()	//Crop square image, its same as crop(1f, 1f) : ratio 1:1
                         .compress(1024)			//Final image size will be less than 1 MB(Optional)
                         .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
                         .start();
             }
         });
+
+        btnValider.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Récupérer les données du formulaire
+                String titre = titreP.getText().toString();
+                String description = descriptionP.getText().toString();
+
+                String date = dateAjout.getText().toString();
+                // Formater la date dans le format attendu par la méthode ajouterRecette
+                SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+                // Garantit que si selectedImageUri est null, une chaîne vide sera utilisée à la place,
+                // évitant ainsi la NullPointerException
+                String imageUri = (selectedImageUri != null) ? selectedImageUri.toString() : "";
+
+                // Récupérer l'objet Utilisateur depuis UserDataSingleton
+                Utilisateur utilisateur = UserDataSingleton.getInstance().getUtilisateur();
+
+                // Gestion des erreurs
+                if (selectedImageUri == null) {
+                    showToast("Veuillez sélectionner une image pour votre recette.");
+                    return;
+                } else if (titre.isEmpty()) {
+                    showToast("Veuillez entrer un titre pour votre recette.");
+                    return; // Sortir de la méthode sans enregistrer si le titre est vide
+                } else if (utilisateur != null) {
+                    int idUtilisateur = utilisateur.getIdUtilisateur();
+
+                    // Enregistrement les données dans la table Recette
+                    try {
+                        Date parsedDate = inputFormat.parse(date);
+                        String formattedDate = outputFormat.format(parsedDate);
+
+                        connBD.ajouterRecette(idUtilisateur, titre, description, formattedDate, imageUri);
+                    } catch (SQLException | ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    showToast("Votre recette a bien été enregistrée et postée !");
+                    // Redirection vers PlatActivity en passant l'ID de la recette comme extra
+                    int newRecipeId = connBD.getLatestRecipeId();
+                    Intent intent = new Intent(AddPlatActivity.this, PlatActivity.class);
+                    intent.putExtra("postId", newRecipeId);
+                    startActivity(intent);
+                } else {
+                    showToast("Problème d'idUtilisateur");
+                }
+            }
+        });
+    }
+
+    public void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -108,10 +168,14 @@ public class AddPlatActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Uri uri = data.getData();
-        // L'image sélectionnée par l'utilisateur dans une autre activité (ici la galerie d'images)
-        // est affichée dans la vue image (imgP).
-        imgP.setImageURI(uri);
+        //si le résultat provient bien de l'activité d'image qu'on a lancée et que cette activité s'est terminée avec succès
+        if (resultCode == Activity.RESULT_OK && requestCode == ImagePicker.REQUEST_CODE) {
+            selectedImageUri = data.getData();
+
+            // L'image sélectionnée par l'utilisateur dans une autre activité (ici la galerie d'images)
+            // est affichée dans la vue image (imgP).
+            imgP.setImageURI(selectedImageUri);
+        }
     }
 
     @Override
@@ -125,4 +189,18 @@ public class AddPlatActivity extends Activity {
         String dateStr = dateFormat.format(dateDuJour);
         dateAjout.setText(dateStr);
     }
+
+
+    //S'occupe de la liste des ingrédients une fois le fragment d'ajout de nouvel ingrédient en bas de la page est fermé
+    @Override
+    public void handleDialogClose(DialogInterface dialog) {
+        try {
+            ingredientList = connBD.getTousIngredients();
+            ingrAdapter.setIngredients(ingredientList);
+            ingrAdapter.notifyDataSetChanged(); //update le recyclerView
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

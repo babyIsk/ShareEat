@@ -13,4 +13,6 @@
     <color name="jaune_shareeat">#FABE58</color>
     <color name="vert_shareeat">#7FA428</color>
     <color name="toolbar_color">#4D878787</color>
+    <color name="transparent">#00000000</color>
+
 </resources>

@@ -1,12 +1,17 @@
 package com.example.shareeat.modele;
 
 import android.os.StrictMode;
+import android.util.Log;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ConnexionBD {
@@ -23,6 +28,11 @@ public class ConnexionBD {
     private PreparedStatement pStmUpdateStatus;
     private PreparedStatement pStmUpdateIngr;
     private PreparedStatement pStmDeleteIngr;
+    private PreparedStatement pStmAddPlat;
+    private PreparedStatement pStmRecette;
+    private PreparedStatement pStmGetLatestRecipeId;
+    private PreparedStatement pStmGetUtilisateur;
+    PreparedStatement pStmUpdateUser;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -47,6 +57,11 @@ public class ConnexionBD {
         pStmUpdateStatus = conn.prepareStatement("UPDATE Ingredients SET statusCheck = ? WHERE idIngredient = ?");
         pStmUpdateIngr = conn.prepareStatement("UPDATE Ingredients SET nom = ? WHERE idIngredient = ?");
         pStmDeleteIngr = conn.prepareStatement("DELETE FROM Ingredients WHERE idIngredient = ?");
+        pStmAddPlat = conn.prepareStatement("INSERT INTO Recette (IdUtilisateur, Titre, Description, Date, ImageRecette) VALUES (?, ?, ?, ?, ?)");
+        pStmRecette = conn.prepareStatement("SELECT * FROM Recette WHERE IdRecette = ?");
+        pStmGetLatestRecipeId = conn.prepareStatement("SELECT LAST_INSERT_ID() AS LatestRecipeId");
+        pStmGetUtilisateur = conn.prepareStatement("SELECT * FROM Utilisateurs WHERE IdUtilisateur = ?");
+        pStmUpdateUser = conn.prepareStatement("UPDATE Utilisateurs SET Prenom = ?, Pseudo = ?, Bio = ?, Photo = ? WHERE IdUtilisateur = ?");
     }
 
     public Utilisateur inscription(String pseudo, String nom, String prenom, String email, String mdp) {
@@ -78,7 +93,9 @@ public class ConnexionBD {
                         resultSet.getString("Nom"),
                         resultSet.getString("Pseudo"),
                         resultSet.getString("Mail"),
-                        resultSet.getString("Mdp")
+                        resultSet.getString("Mdp"),
+                        resultSet.getString("Bio"),
+                        resultSet.getString("Photo")
                 );
                 System.out.println("Utilisateur trouvé : " + utilisateur);
                 return utilisateur;
@@ -143,6 +160,7 @@ public class ConnexionBD {
     }
 
     public void updateStatusIngr(int status, int idIngredient) throws SQLException {
+        System.out.println("Updating status for ingredient " + idIngredient + " to " + status);
         this.pStmUpdateStatus.setInt(1, status);
         this.pStmUpdateStatus.setInt(2, idIngredient);
         this.pStmUpdateStatus.executeUpdate();
@@ -157,5 +175,117 @@ public class ConnexionBD {
     public void deleteIngredient(int idIngredient) throws SQLException {
         this.pStmDeleteIngr.setInt(1, idIngredient);
         this.pStmDeleteIngr.executeUpdate();
+    }
+
+    public void ajouterRecette(int idUtilisateur, String titre, String description, String date, String imageUri) throws SQLException {
+        try {
+            Log.d("ConnexionBD", "Ajout de recette - ID utilisateur : " + idUtilisateur);
+            pStmAddPlat.setInt(1, idUtilisateur);
+            pStmAddPlat.setString(2, titre);
+            pStmAddPlat.setString(3, description);
+
+            // Formater la date dans le format attendu par la base de données
+            SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            Date parsedDate = inputFormat.parse(date);
+            String formattedDate = outputFormat.format(parsedDate);
+
+            pStmAddPlat.setString(4, formattedDate);
+            pStmAddPlat.setString(5, imageUri);
+            pStmAddPlat.executeUpdate();
+            Log.d("ConnexionBD", "Recette ajoutée avec succès !");
+        } catch (SQLException | ParseException e) {
+            Log.e("ConnexionBD", "Erreur lors de l'ajout de la recette : " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public Plat getRecetteById(int idP) {
+            try {
+                pStmRecette.setInt(1, idP);
+
+                ResultSet res = this.pStmRecette.executeQuery();
+                if (res.next()) {
+                    // Récupérer les données de la ligne
+                    int idUtilisateur = res.getInt("IdUtilisateur");
+                    String titre = res.getString("Titre");
+                    String description = res.getString("Description");
+                    String date = res.getString("Date");
+                    String imageRecette = res.getString("ImageRecette");
+
+                    // Créer et retourner un objet Recette avec les données récupérées
+                    Plat plat = new Plat();
+                    plat.setIdP(idP);
+                    plat.setIdUtilisateur(idUtilisateur);
+                    plat.setTitreP(titre);
+                    plat.setDescriptionP(description);
+                    plat.setDate(date);
+                    plat.setImgRecette(imageRecette);
+                    return plat;
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        return null; // en cas d'erreur ou si aucune recette n'est trouvée
+    }
+
+    public int getLatestRecipeId() {
+        int latestRecipeId = -1;
+
+        try {
+            ResultSet res = this.pStmGetLatestRecipeId.executeQuery();
+            if (res.next()) {
+                latestRecipeId = res.getInt("LatestRecipeId");
+            }
+            pStmGetLatestRecipeId.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return latestRecipeId;
+    }
+
+    public Utilisateur getUtilisateurById(int userId) {
+        try {
+            pStmGetUtilisateur.setInt(1, userId);
+            ResultSet resultSet = pStmGetUtilisateur.executeQuery();
+            if (resultSet.next()) {
+                Utilisateur utilisateur = new Utilisateur(
+                        resultSet.getInt("IdUtilisateur"),
+                        resultSet.getString("Prenom"),
+                        resultSet.getString("Nom"),
+                        resultSet.getString("Pseudo"),
+                        resultSet.getString("Mail"),
+                        resultSet.getString("Mdp"),
+                        resultSet.getString("Bio"),
+                        resultSet.getString("Photo")
+                );
+                pStmGetUtilisateur.close();
+                return utilisateur;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void updateUtilisateur(Utilisateur utilisateurConnecte) {
+        try {
+            // Définir les paramètres de la requête avec les nouvelles valeurs
+            pStmUpdateUser.setString(1, utilisateurConnecte.getPrenom());
+            pStmUpdateUser.setString(2, utilisateurConnecte.getPseudo());
+            pStmUpdateUser.setString(3, utilisateurConnecte.getBio());
+            pStmUpdateUser.setString(4, utilisateurConnecte.getPhoto());
+            pStmUpdateUser.setInt(5, utilisateurConnecte.getIdUtilisateur());
+            pStmUpdateUser.executeUpdate();
+
+            pStmUpdateUser.close();
+            Log.d("ConnexionBD", "Utilisateur mis à jour avec succès dans la base de données.");
+            System.out.println();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Log.e("ConnexionBD", "Erreur lors de la mise à jour de l'utilisateur dans la base de données.");
+        }
     }
 }

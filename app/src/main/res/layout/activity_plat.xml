@@ -1,24 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PlatActivity">
 
-    <ListView
+    <!-- background="@null" va supprimer toute indication visuelle de clic -->
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imgPlat"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:src="@drawable/plat_img"
+        android:layout_marginTop="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/dateAjoutPlat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.526"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:shapeAppearanceOverlay="@style/carre"
+        app:strokeColor="@color/rouge_shareeat"
+        app:strokeWidth="2dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ingredientsList"
-        android:layout_width="345dp"
-        android:layout_height="260dp"
-        android:layout_marginStart="83dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="82dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ingredientsLabel"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/titrePlat"
@@ -29,50 +50,34 @@
         android:layout_marginEnd="177dp"
         android:maxLines="2"
         android:text="Titre du plat"
-        android:textSize="25sp"
         android:textColor="@color/rouge_shareeat"
+        android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.325" />
 
     <TextView
         android:id="@+id/descriptionPlat"
-        android:layout_width="wrap_content"
+        android:layout_width="349dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="165dp"
+        android:background="@drawable/add_btn_border_gray"
         android:maxLines="5"
+        android:padding="10dp"
         android:text="Description"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.078"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titrePlat"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.008" />
 
-    <TextView
-        android:id="@+id/ingredientsLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="33dp"
-        android:text="Ingredients"
-        android:textColor="@color/rouge_shareeat"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.215"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionPlat"
-        app:layout_constraintVertical_bias="0.009" />
-
-<!-- background="@null" va supprimer toute indication visuelle de clic -->
     <EditText
         android:id="@+id/dateAjoutPlat"
         android:layout_width="160dp"
@@ -85,22 +90,43 @@
         android:inputType="date"
         android:textAlignment="center"
         android:textColor="@color/gris"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/titrePlat"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <ImageView
-        android:id="@+id/imgPlat"
-        android:layout_width="181dp"
-        android:layout_height="227dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        app:layout_constraintBottom_toTopOf="@+id/dateAjoutPlat"
+    <TextView
+        android:id="@+id/ingredientsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="Ingredients"
+        android:textColor="@color/rouge_shareeat"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/plat_img"/>
+        app:layout_constraintTop_toBottomOf="@+id/descriptionPlat"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/ingredientsList"
+        app:layout_constraintEnd_toEndOf="@+id/ingredientsList"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="@+id/ingredientsList"
+        app:layout_constraintTop_toTopOf="@+id/ingredientsList"
+        app:layout_constraintVertical_bias="0.527"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -6,6 +6,8 @@ public class Ingredient {
     int status; // 0 -> false nonchecked, 1 -> true checked
     String ingr;
 
+
+
     public Ingredient(int id, int status, String ingr) {
         this.id = id;
         this.status = status;

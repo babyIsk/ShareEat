@@ -4,36 +4,56 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    Button redirection;
+    Button redirect2;
+    Button redirect3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 
-        // Référence à l'ImageView
-        ImageView logoImageView = findViewById(R.id.logoImageView);
 
-        // Animation de l'ImageView
-        logoImageView.animate().translationY(-100f).setDuration(1000).start();
+        redirection = (Button) findViewById(R.id.btnRedirection);
+        redirect2 = (Button) findViewById(R.id.btnRedirection2);
+        redirect3 = (Button) findViewById(R.id.btnRedirection3);
 
-        // Handler pour déclencher une action après un délai
-        new Handler().postDelayed(new Runnable() {
+        redirection.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                // Transition vers l'activité principale
-                startActivity(new Intent(MainActivity.this, ConnexionActivity.class));
+            public void onClick(View view) {
+                // Redirection vers formulaire post un plat
+                Intent intent = new Intent(MainActivity.this, AddPlatActivity.class);
+                startActivity(intent);
                 finish();
-                // ou masquage du layout temporaire : findViewById(R.id.yourLayoutId).setVisibility(View.GONE);
             }
-        }, 2000); // Délai de 2000 millisecondes (2 secondes)
+        });
+
+        redirect2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Redirection vers la messagerie
+                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        redirect3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Redirection vers le profil
+                Intent intent = new Intent(MainActivity.this, ProfilGaleryActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
 }
