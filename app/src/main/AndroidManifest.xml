@@ -53,6 +53,12 @@
 
         </activity>
 
+        <activity
+            android:name=".AccueilActivity"
+            android:exported="true">
+
+        </activity>
+
         <activity android:name=".StartAppActivity"
             android:exported="true">
             <intent-filter>

@@ -1,0 +1,5 @@
+<!-- res/color/toolbar_button_selector.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:color="@color/black" />
+    <item android:color="#B0000000" />
+</selector>
