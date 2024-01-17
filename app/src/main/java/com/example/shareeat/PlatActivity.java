@@ -90,7 +90,7 @@ public class PlatActivity extends Activity {
                 dateAjout.setText(plat.getDate()); // cas : erreur, afficher la date brute
             }
 
-            Picasso.get().load(plat.getImageUrl()).into(imgP);
+            Picasso.get().load("https://shareeat.alwaysdata.net/photoRecette/"+plat.getImageUrl()).into(imgP);
 
             // Cache le cercle de loading
             loading.setVisibility(View.GONE);
