@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         redirect2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,5 +57,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 }

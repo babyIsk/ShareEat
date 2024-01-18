@@ -132,7 +132,6 @@ public class AddNewIngredient extends BottomSheetDialogFragment {
         });
     }
 
-
     @Override
     public void onDismiss(DialogInterface dialog) {
         Activity activity = getActivity();
