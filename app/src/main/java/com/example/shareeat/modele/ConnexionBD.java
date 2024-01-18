@@ -29,10 +29,11 @@ public class ConnexionBD {
     private PreparedStatement pStmUpdateIngr;
     private PreparedStatement pStmDeleteIngr;
     private PreparedStatement pStmAddPlat;
-    private PreparedStatement pStmRecette;
+    private PreparedStatement pStmRecetteById;
     private PreparedStatement pStmGetLatestRecipeId;
     private PreparedStatement pStmGetUtilisateur;
     PreparedStatement pStmUpdateUser;
+    private PreparedStatement pStmRecetteByIdAndDate;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -58,10 +59,11 @@ public class ConnexionBD {
         pStmUpdateIngr = conn.prepareStatement("UPDATE Ingredients SET nom = ? WHERE idIngredient = ?");
         pStmDeleteIngr = conn.prepareStatement("DELETE FROM Ingredients WHERE idIngredient = ?");
         pStmAddPlat = conn.prepareStatement("INSERT INTO Recette (IdUtilisateur, Titre, Description, Date, ImageRecette) VALUES (?, ?, ?, ?, ?)");
-        pStmRecette = conn.prepareStatement("SELECT * FROM Recette WHERE IdRecette = ?");
+        pStmRecetteById = conn.prepareStatement("SELECT * FROM Recette WHERE IdRecette = ?");
         pStmGetLatestRecipeId = conn.prepareStatement("SELECT LAST_INSERT_ID() AS LatestRecipeId");
         pStmGetUtilisateur = conn.prepareStatement("SELECT * FROM Utilisateurs WHERE IdUtilisateur = ?");
         pStmUpdateUser = conn.prepareStatement("UPDATE Utilisateurs SET Prenom = ?, Pseudo = ?, Bio = ?, Photo = ? WHERE IdUtilisateur = ?");
+        pStmRecetteByIdAndDate = conn.prepareStatement("SELECT * FROM Recette WHERE IdUtilisateur = ? AND Date = ?");
     }
 
     public Utilisateur inscription(String pseudo, String nom, String prenom, String email, String mdp) {
@@ -203,9 +205,9 @@ public class ConnexionBD {
 
     public Plat getRecetteById(int idP) {
             try {
-                pStmRecette.setInt(1, idP);
+                pStmRecetteById.setInt(1, idP);
 
-                ResultSet res = this.pStmRecette.executeQuery();
+                ResultSet res = this.pStmRecetteById.executeQuery();
                 if (res.next()) {
                     // Récupérer les données de la ligne
                     int idUtilisateur = res.getInt("IdUtilisateur");
@@ -287,5 +289,46 @@ public class ConnexionBD {
             e.printStackTrace();
             Log.e("ConnexionBD", "Erreur lors de la mise à jour de l'utilisateur dans la base de données.");
         }
+    }
+
+    public List<Plat> getTousRecetteByIdUser(Utilisateur utilisateur, ArrayList<String> dates) {
+        List<Plat> recettes = new ArrayList<>();
+        Log.d("ConnexionBD", "Début de la méthode getTousRecetteByIdUser");
+        Log.d("ConnexionBD", "Requête SQL : " + pStmRecetteByIdAndDate);
+        try {
+            pStmRecetteByIdAndDate.setInt(1, utilisateur.getIdUtilisateur());
+            for (String formattedDate : dates) {
+                pStmRecetteByIdAndDate.setString(2, formattedDate);
+                ResultSet res = pStmRecetteByIdAndDate.executeQuery();
+
+                while (res.next()) {
+                    int idRecette = res.getInt("IdRecette");
+                    String titre = res.getString("Titre");
+                    String description = res.getString("Description");
+                    String dateRecette = res.getString("Date");
+                    String imageRecette = res.getString("ImageRecette");
+
+                    Plat plat = new Plat();
+                    plat.setIdP(idRecette);
+                    plat.setIdUtilisateur(utilisateur.getIdUtilisateur());
+                    plat.setTitreP(titre);
+                    plat.setDescriptionP(description);
+                    plat.setDate(dateRecette);
+                    plat.setImgRecette(imageRecette);
+                    plat.setAPostePlat(true);
+
+                    recettes.add(plat);
+                }
+            }
+
+            Log.d("ConnexionBD", "Liste des recettes utilisateur : " + recettes);
+        } catch (SQLException e) {
+            Log.e("ConnexionBD", "Erreur SQL : " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        Log.d("ConnexionBD", "Fin de la méthode getTousRecetteByIdUser");
+        return recettes;
+
     }
 }

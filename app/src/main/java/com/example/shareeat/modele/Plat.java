@@ -6,14 +6,9 @@ public class Plat {
     String titreP;
     String descriptionP;
     String[] ingrédients;
-
+    private boolean aPostePlat;
     String date;
     String imgRecette;
-
-    public int getIdP() {
-        return idP;
-    }
-    public int getIdUtilisateur() {return idUtilisateur;}
 
     public void setIdP(int idP) {
         this.idP = idP;
@@ -60,7 +55,10 @@ public class Plat {
         this.date = date;
     }
 
-
-
-
+    public boolean isAPostePlat() {
+        return aPostePlat;
+    }
+    public void setAPostePlat(boolean aPostePlat) {
+        this.aPostePlat = aPostePlat;
+    }
 }

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shareeat.adapter.GaleryAdapter;
 import com.example.shareeat.modele.ConnexionBD;
+import com.example.shareeat.modele.Plat;
 import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
 import com.github.dhaval2404.imagepicker.ImagePicker;
@@ -30,10 +31,12 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Text;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class ProfilGaleryActivity extends AppCompatActivity implements OnItemListener {
 
@@ -50,6 +53,7 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
     private ArrayList<String> daysInMonth;
     private GaleryAdapter galeryAdapter;
     public ConnexionBD connBD;
+    private Utilisateur utilisateurConnecte;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +87,7 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
         Utilisateur utilisateur = UserDataSingleton.getInstance().getUtilisateur();
 
         // Appel de la fonction getUtilisateurById pour obtenir les données
-        Utilisateur utilisateurConnecte = connBD.getUtilisateurById(utilisateur.getIdUtilisateur());
+        utilisateurConnecte = connBD.getUtilisateurById(utilisateur.getIdUtilisateur());
 
         updateUI(utilisateurConnecte);
 
@@ -186,11 +190,63 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
 
         Log.d("ProfilGaleryActivity", "Days in Month: " + TextUtils.join(", ", daysInMonth));
 
-        galeryAdapter = new GaleryAdapter(daysInMonth, this);
+        // Formater les jours du mois sous la forme "yyyy/MM/dd"
+        ArrayList<String> formattedDays = new ArrayList<>();
+        for (String day : daysInMonth) {
+            if (!day.isEmpty()) {
+                int dayOfMonth = Integer.parseInt(day);
+                String formattedDay = new SimpleDateFormat("yyyy/MM/dd").format(selectedDate.getTime());
+                formattedDay = formattedDay.substring(0, 8) + String.format("%02d", dayOfMonth);
+                formattedDays.add(formattedDay);
+            } else {
+                formattedDays.add("");
+            }
+        }
+        Log.d("ProfilGaleryActivity", "Days in Month formatted: " + TextUtils.join(", ", formattedDays));
+
+        // Afficher les recettes propre à l'utilisateur qu'il a posté en fonction de chaque jour du calendrier
+        List<Plat> recettesPourChaqueJour = new ArrayList<>();
+        List<Plat> listeRecettesUtilisateur = connBD.getTousRecetteByIdUser(utilisateurConnecte, formattedDays);
+        Log.d("ProfilGaleryActivity", "Liste des recettes utilisateur : " + listeRecettesUtilisateur);
+        // Pour chaque date dans le calendrier, récupérez la recette de l'utilisateur pour cette date
+        for (String dateCalendrier : formattedDays) {
+            Plat recettePourCetteDate = null;
+            Log.d("ProfilGaleryActivity", "Date: " + dateCalendrier);
+
+            // Parcourez la liste des recettes de l'utilisateur
+            for (Plat recette : listeRecettesUtilisateur) {
+
+                // Convertissez la date de recette en un objet Date car getDate() renvoi un String et pas une Date
+                Date recetteDate;
+                try {
+                    recetteDate = new SimpleDateFormat("yyyy-MM-dd").parse(recette.getDate());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    // Gérer l'erreur de conversion de la date
+                    continue;
+                }
+
+                // Comparez les dates en les convertissant au format souhaité
+                Log.d("ProfilGaleryActivity", "Recette: " + recette);
+                String recetteFormattedDate = new SimpleDateFormat("yyyy/MM/dd").format(recetteDate);
+                if (formattedDays.contains(recetteFormattedDate)) {
+                    recettePourCetteDate = recette;
+                    Log.d("ProfilGaleryActivity", "Recette trouvée pour la date: " + formattedDays);
+                    break;
+                }
+            }
+
+            // Ajoutez la recette (ou null) à la liste
+            recettesPourChaqueJour.add(recettePourCetteDate);
+        }
+
+        galeryAdapter = new GaleryAdapter(this, daysInMonth, recettesPourChaqueJour, this);
         RecyclerView.LayoutManager layoutManager= new GridLayoutManager(getApplicationContext(), 7);
         galeryRecyclerView.setLayoutManager(layoutManager);
         galeryRecyclerView.setAdapter(galeryAdapter);
+        galeryAdapter.setlisteRecettesUtilisateur(listeRecettesUtilisateur);
         galeryAdapter.notifyDataSetChanged();
+
     }
 
     private ArrayList<String> daysInMonthArray(Calendar  date) {
@@ -261,7 +317,6 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
                 // Si l'utilisateur n'a pas de photo, affiche une image par défaut
                 imgProfil.setImageResource(R.drawable.profil_picture);
             }
-            Log.d("ProfilGaleryActivity", "Bio récupérée de la base de données : " + bio);
         }
     }
 
