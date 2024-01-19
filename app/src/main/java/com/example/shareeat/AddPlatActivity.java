@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,18 +18,30 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shareeat.adapter.IngrAdapter;
 import com.example.shareeat.modele.ConnexionBD;
+import com.example.shareeat.modele.FileUploadService;
 import com.example.shareeat.modele.Ingredient;
 import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 
 
 public class AddPlatActivity extends AppCompatActivity implements DialogCloseListener{
@@ -121,7 +134,7 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
 
                 // Garantit que si selectedImageUri est null, une chaîne vide sera utilisée à la place,
                 // évitant ainsi la NullPointerException
-                String imageUri = (selectedImageUri != null) ? selectedImageUri.toString() : "";
+                String imageUri = (selectedImageUri != null) ? selectedImageUri.getLastPathSegment() : "";
 
                 // Récupérer l'objet Utilisateur depuis UserDataSingleton
                 Utilisateur utilisateur = UserDataSingleton.getInstance().getUtilisateur();
@@ -134,15 +147,13 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
                     showToast("Veuillez entrer un titre pour votre recette.");
                     return; // Sortir de la méthode sans enregistrer si le titre est vide
                 } else if (utilisateur != null) {
-                    int idUtilisateur = utilisateur.getIdUtilisateur();
-
                     // Enregistrement les données dans la table Recette
                     try {
+                        uploadImageToServer(selectedImageUri);
                         Date parsedDate = inputFormat.parse(date);
                         String formattedDate = outputFormat.format(parsedDate);
-
-                        connBD.ajouterRecette(idUtilisateur, titre, description, formattedDate, imageUri);
-                    } catch (SQLException | ParseException e) {
+                        connBD.ajouterRecette(utilisateur.getIdUtilisateur(), titre, description, formattedDate, imageUri);
+                    } catch (SQLException | ParseException | IOException e) {
                         throw new RuntimeException(e);
                     }
 
@@ -161,6 +172,47 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
 
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void uploadImageToServer(Uri imageUri) throws IOException {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+            byte[] bytes = new byte[inputStream.available()];
+            inputStream.read(bytes);
+            inputStream.close();
+            // Envoi des bytes au serveur (implémentez cette partie selon votre API)
+            // Utilisez des bibliothèques comme Retrofit, Volley ou OkHttpClient pour envoyer la requête POST
+            // Assurez-vous de gérer les détails d'authentification ou de sécurité nécessaires
+            // Exemple avec Retrofit
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://shareeat.alwaysdata.net/")
+                    .build();
+
+            FileUploadService service = retrofit.create(FileUploadService.class);
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), bytes);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("image", imageUri.getLastPathSegment(), requestFile);
+
+            try {
+                Call<ResponseBody> call = service.uploadRecipeImage(body);
+                Response<ResponseBody> response = call.execute();
+
+                if (response.isSuccessful()) {
+                    // Image téléchargée avec succès
+                    showToast("reussi");
+                    Log.d("Server Response", response.body().string());
+                } else {
+                    // Gestion des erreurs
+                    showToast("Failed to upload image. Error: " + response.message());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                showToast("Error reading image file");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showToast("Error reading image file");
+        }
     }
 
     @Override

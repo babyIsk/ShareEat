@@ -4,20 +4,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.Message;
 import com.example.shareeat.modele.MessageAdapter;
 import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;

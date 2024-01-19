@@ -16,27 +16,39 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shareeat.adapter.GaleryAdapter;
 import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.Plat;
+import com.example.shareeat.modele.FileUploadService;
 import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
+
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 
 public class ProfilGaleryActivity extends AppCompatActivity implements OnItemListener {
 
@@ -136,7 +148,7 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
                 String nouveauPrenom = userNameInput.getText().toString();
                 String nouveauPseudo = userPseudoInput.getText().toString();
                 String nouvelleBio = userBioInput.getText().toString();
-                String imageUri = (selectedImageUri != null) ? selectedImageUri.toString() : "";
+                String imageUri = (selectedImageUri != null) ? selectedImageUri.getLastPathSegment() : "";
 
                 // Gestion erreur
                 if (TextUtils.isEmpty(nouveauPrenom) || TextUtils.isEmpty(nouveauPseudo)) {
@@ -153,7 +165,15 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
                 // Update BD table Utilisateur
                 connBD.updateUtilisateur(utilisateurConnecte);
 
-                showToast("Votre profil a bien été modifié !");
+                if (selectedImageUri != null) {
+                    try {
+                        uploadImageToServer(selectedImageUri);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                showToast(utilisateurConnecte.getPhoto());
                 updateUI(utilisateurConnecte);
 
                 userNameInput.setEnabled(false);
@@ -296,6 +316,7 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
     } //******************** FIN PARTIE CALENDRIER / GALERIE***************************************
 
     private void updateUI(Utilisateur user) {
+
         if (user != null) {
             userNameInput.setText(user.getPrenom());
             userPseudoInput.setText(user.getPseudo());
@@ -310,7 +331,9 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
             }
 
             // Mettre à jour la photo de profil
-            String photoUri = user.getPhoto();
+            String photoUri = "https://shareeat.alwaysdata.net/photoProfil/"+user.getPhoto();
+
+
             if (photoUri != null && !photoUri.isEmpty()) {
                 Picasso.get().load(photoUri).into(imgProfil);
             } else {
@@ -320,8 +343,51 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
         }
     }
 
+
+
+
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void uploadImageToServer(Uri imageUri) throws IOException {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+            byte[] bytes = new byte[inputStream.available()];
+            inputStream.read(bytes);
+            inputStream.close();
+            // Envoi des bytes au serveur (implémentez cette partie selon votre API)
+            // Utilisez des bibliothèques comme Retrofit, Volley ou OkHttpClient pour envoyer la requête POST
+            // Assurez-vous de gérer les détails d'authentification ou de sécurité nécessaires
+            // Exemple avec Retrofit
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://shareeat.alwaysdata.net/")
+                    .build();
+
+            FileUploadService service = retrofit.create(FileUploadService.class);
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), bytes);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("image", imageUri.getLastPathSegment(), requestFile);
+
+            try {
+                Call<ResponseBody> call = service.uploadImage(body);
+                Response<ResponseBody> response = call.execute();
+
+                if (response.isSuccessful()) {
+                    // Image téléchargée avec succès
+                    showToast("reussi");
+                    Log.d("Server Response", response.body().string());
+                } else {
+                    // Gestion des erreurs
+                    showToast("Failed to upload image. Error: " + response.message());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                showToast("Error reading image file");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showToast("Error reading image file");
+        }
     }
 
     @Override
