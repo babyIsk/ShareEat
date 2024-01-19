@@ -34,6 +34,7 @@ public class ConnexionBD {
     private PreparedStatement pStmGetUtilisateur;
     PreparedStatement pStmUpdateUser;
     private PreparedStatement pStmRecetteByIdAndDate;
+    private PreparedStatement pStmRecetteAccueil;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -62,6 +63,7 @@ public class ConnexionBD {
         pStmRecetteById = conn.prepareStatement("SELECT * FROM Recette WHERE IdRecette = ?");
         pStmGetLatestRecipeId = conn.prepareStatement("SELECT LAST_INSERT_ID() AS LatestRecipeId");
         pStmGetUtilisateur = conn.prepareStatement("SELECT * FROM Utilisateurs WHERE IdUtilisateur = ?");
+        pStmRecetteAccueil = conn.prepareStatement("SELECT * FROM Recette WHERE IdUtilisateur <> ?");
         pStmUpdateUser = conn.prepareStatement("UPDATE Utilisateurs SET Prenom = ?, Pseudo = ?, Bio = ?, Photo = ? WHERE IdUtilisateur = ?");
         pStmRecetteByIdAndDate = conn.prepareStatement("SELECT * FROM Recette WHERE IdUtilisateur = ? AND Date = ?");
     }
@@ -129,6 +131,36 @@ public class ConnexionBD {
         }
         return null;
     }
+
+    public List<Plat> getRecetteAccueil(int userId){
+        List<Plat> plats = new ArrayList<>();
+        try {
+            pStmRecetteAccueil.setInt(1, userId);  // Utilisation de la déclaration pStmRecetteAccueil spécifique aux recettes
+            ResultSet resultSet = pStmRecetteAccueil.executeQuery();
+            while (resultSet.next()) {
+                Plat plat = new Plat(resultSet.getInt("IdRecette"),
+                        resultSet.getInt("IdUtilisateur"),
+                        resultSet.getString("Titre"),
+                        resultSet.getString("Description"),
+                        resultSet.getDate("Date"),
+                        resultSet.getString("ImageRecette"));
+                plats.add(plat);
+
+                if (plats.isEmpty()) {
+                    Log.d("PlatDebug", "La liste de plats est vide");
+                } else {
+                    for (Plat plast : plats) {
+                        Log.d("PlatDebug", "Titre du plat : " + plast.getTitreP());
+                    }
+                }
+            }
+            return plats;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     public Message sendMessage(int userId, int contactId,String message){
         try {
@@ -213,17 +245,10 @@ public class ConnexionBD {
                     int idUtilisateur = res.getInt("IdUtilisateur");
                     String titre = res.getString("Titre");
                     String description = res.getString("Description");
-                    String date = res.getString("Date");
                     String imageRecette = res.getString("ImageRecette");
 
                     // Créer et retourner un objet Recette avec les données récupérées
-                    Plat plat = new Plat();
-                    plat.setIdP(idP);
-                    plat.setIdUtilisateur(idUtilisateur);
-                    plat.setTitreP(titre);
-                    plat.setDescriptionP(description);
-                    plat.setDate(date);
-                    plat.setImgRecette(imageRecette);
+                    Plat plat = new Plat(idP,idUtilisateur,titre,description,res.getDate("Date"),imageRecette);
                     return plat;
                 }
             } catch (SQLException ex) {
@@ -308,13 +333,7 @@ public class ConnexionBD {
                     String dateRecette = res.getString("Date");
                     String imageRecette = res.getString("ImageRecette");
 
-                    Plat plat = new Plat();
-                    plat.setIdP(idRecette);
-                    plat.setIdUtilisateur(utilisateur.getIdUtilisateur());
-                    plat.setTitreP(titre);
-                    plat.setDescriptionP(description);
-                    plat.setDate(dateRecette);
-                    plat.setImgRecette(imageRecette);
+                    Plat plat = new Plat(idRecette,utilisateur.getIdUtilisateur(),titre,description,res.getDate("Date"),imageRecette);
                     plat.setAPostePlat(true);
 
                     recettes.add(plat);

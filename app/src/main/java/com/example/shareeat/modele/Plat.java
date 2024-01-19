@@ -1,14 +1,27 @@
 package com.example.shareeat.modele;
 
+import java.sql.Date;
+
 public class Plat {
     int idP;
     int idUtilisateur;
-    String titreP;
-    String descriptionP;
-    String[] ingrédients;
+    private String titreP;
+    private String descriptionP;
+    private String[] ingrédients;
     private boolean aPostePlat;
-    String date;
-    String imgRecette;
+    private Date date;
+    private String imgRecette;
+
+    public Plat(int idP, int idUtilisateur, String titreP, String descriptionP, Date date, String imgRecette) {
+        this.idP = idP;
+        this.idUtilisateur = idUtilisateur;
+        this.titreP = titreP;
+        this.descriptionP = descriptionP;
+        this.date = date;
+        this.imgRecette = imgRecette;
+    }
+
+    public int getIdUtilisateur() { return idUtilisateur; }
 
     public void setIdP(int idP) {
         this.idP = idP;
@@ -48,10 +61,10 @@ public class Plat {
         this.imgRecette = imageRecette;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -71,7 +72,10 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil_galery);
-        getSupportActionBar().hide();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
 
         // Références aux vues
         imgProfil = (ImageView) findViewById(R.id.imgProfil);
@@ -237,14 +241,8 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
             for (Plat recette : listeRecettesUtilisateur) {
 
                 // Convertissez la date de recette en un objet Date car getDate() renvoi un String et pas une Date
-                Date recetteDate;
-                try {
-                    recetteDate = new SimpleDateFormat("yyyy-MM-dd").parse(recette.getDate());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    // Gérer l'erreur de conversion de la date
-                    continue;
-                }
+                Date recetteDate = recette.getDate();
+
 
                 // Comparez les dates en les convertissant au format souhaité
                 Log.d("ProfilGaleryActivity", "Recette: " + recette);
@@ -331,11 +329,11 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
             }
 
             // Mettre à jour la photo de profil
-            String photoUri = "https://shareeat.alwaysdata.net/photoProfil/"+user.getPhoto();
+            String photoUri = user.getPhoto();
 
 
             if (photoUri != null && !photoUri.isEmpty()) {
-                Picasso.get().load(photoUri).into(imgProfil);
+                Picasso.get().load("https://shareeat.alwaysdata.net/photoProfil/"+photoUri).into(imgProfil);
             } else {
                 // Si l'utilisateur n'a pas de photo, affiche une image par défaut
                 imgProfil.setImageResource(R.drawable.profil_picture);

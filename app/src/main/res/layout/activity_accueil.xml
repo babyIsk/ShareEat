@@ -8,6 +8,7 @@
     tools:context=".MainActivity"
     >
 
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -15,19 +16,43 @@
         android:background="#494949"
         />
 
+    <!--<androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toTopOf="@+id/navbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/recette_user" />-->
+
+
+    <ListView
+        android:id="@+id/recettes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/navbar"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:divider="@null"
+        android:gravity="center"/>
+
+
+
+
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navbar"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        app:labelVisibilityMode="unlabeled"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/navbar"
-        app:itemIconTint="@color/toolbar_color"
-        app:itemIconSize="35dp"
-        android:id="@+id/navbar"
         android:background="@color/gris"
         app:itemActiveIndicatorStyle="@null"
-        >
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
+        app:itemIconSize="35dp"
+        app:itemIconTint="@color/black"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/navbar"></com.google.android.material.bottomnavigation.BottomNavigationView>
 
 
     <View
@@ -58,7 +83,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/baseline_person_24"
             android:layout_gravity="end"
-            app:tint="@color/toolbar_color"
+            app:tint="@color/black"
             android:layout_marginRight="10dp"
             />
 

@@ -1,33 +1,76 @@
 package com.example.shareeat;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.shareeat.AddPlatActivity;
 import com.example.shareeat.R;
+import com.example.shareeat.adapter.RecetteAdapter;
+import com.example.shareeat.modele.ConnexionBD;
+import com.example.shareeat.modele.Message;
+import com.example.shareeat.modele.Plat;
+import com.example.shareeat.modele.UserDataSingleton;
+import com.example.shareeat.modele.Utilisateur;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class AccueilActivity extends AppCompatActivity{
+import java.sql.SQLException;
+import java.util.List;
 
-    BottomNavigationView bottomNavigationView;
+public class AccueilActivity extends AppCompatActivity {
+
+    private BottomNavigationView bottomNavigationView;
+    private Utilisateur user;
+    private ListView listView;
+    private ConnexionBD connexionBD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accueil);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
 
+        user = UserDataSingleton.getInstance().getUtilisateur();
         bottomNavigationView = findViewById(R.id.navbar);
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        listView = findViewById(R.id.recettes);
+
+        try {
+            connexionBD = new ConnexionBD();
+            if (connexionBD != null) {
+                List<Plat> plats = connexionBD.getRecetteAccueil(user.getIdUtilisateur());
+                if (plats != null) {
+                    RecetteAdapter recetteAdapter = new RecetteAdapter(this, plats, user);
+                    listView.setAdapter(recetteAdapter);
+                } else {
+                    // Gérez le cas où la liste de plats est null
+                    Log.d("PlatDebug", "La liste de plats est null");
+                }
+            } else {
+                // Gérez le cas où la connexionBD est null
+                Log.d("PlatDebug", "La connexionBD est null");
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            // Gérez les exceptions de manière appropriée (par exemple, affichez un message d'erreur)
+            e.printStackTrace();
+        }
+
+
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                if(item.getItemId() == R.id.nav_home){
+                if (item.getItemId() == R.id.nav_home) {
                     return true;
                 } else if (item.getItemId() == R.id.nav_search) {
                     return true;
@@ -41,4 +84,25 @@ public class AccueilActivity extends AppCompatActivity{
         });
     }
 
+    public List<Plat> getRecette(Utilisateur user) {
+        try {
+            ConnexionBD bd = new ConnexionBD();
+            List<Plat> plats = bd.getRecetteAccueil(user.getIdUtilisateur());
+
+            if (plats != null) {
+                for (Plat plat : plats) {
+                    Log.d("PlatDebug", "Titre du plat : " + plat.getTitreP());
+
+                }
+            } else {
+                Log.d("PlatDebug", "La liste de plats est null");
+            }
+            return plats;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

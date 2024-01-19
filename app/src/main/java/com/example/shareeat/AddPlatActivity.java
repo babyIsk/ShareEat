@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,7 +70,10 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
 
         // Lier le layout à l'activity
         setContentView(R.layout.activity_add_plat);
-        getSupportActionBar().hide();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
 
         // Obtention des références sur les composants (ressources)
         dateAjout = (EditText) findViewById(R.id.dateFormAjoutPlat);

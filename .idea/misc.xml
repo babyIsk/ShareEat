@@ -1,37 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2555" />
-        <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/add_btn_border_gray.xml" value="0.2195" />
-        <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/add_photo.xml" value="0.2195" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/boutton.xml" value="0.2555" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/encadrement_formulaire.xml" value="0.2555" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/gradient_background.xml" value="0.2555" />
-        <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.2195" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2555" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/message_receive.xml" value="0.252" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/message_send.xml" value="0.2545" />
-        <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/profil_picture.xml" value="0.121" />
-        <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/round_image_view.xml" value="0.121" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/slide_in_right.xml" value="0.244" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/drawable/slide_out_left.xml" value="0.244" />
+        <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/activity_accueil.xml" value="0.2" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/activity_connexion.xml" value="0.2" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/activity_inscription.xml" value="0.2" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/activity_main.xml" value="0.24682971014492755" />
-        <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/activity_message.xml" value="0.20521590423257802" />
+        <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/activity_message.xml" value="0.1" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/activity_plat.xml" value="0.20521590423257802" />
-        <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/activity_profil.xml" value="0.4" />
-        <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/componant_galery_calendar_cell.xml" value="0.72" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/message_receive.xml" value="0.4" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/message_send.xml" value="0.4" />
+        <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/layout/recette_user.xml" value="0.2422145328719723" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.121" />
         <entry key="..\:/Users/calli/OneDrive/Documents/GitHub/ShareEat/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
       </map>
     </option>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
