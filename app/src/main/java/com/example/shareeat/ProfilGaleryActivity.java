@@ -33,7 +33,6 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,6 +66,8 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
     private Utilisateur utilisateurConnecte;
     List<Plat> recettesPourChaqueJour = new ArrayList<>();
     List<Plat> listeRecettesUtilisateur = new ArrayList<>();
+    private boolean isModifierMode = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,8 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
         btnModifier.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isModifierMode = !isModifierMode; //pour le calendrier
+
                 // Rendre les EditText en mode non éditable
                 userNameInput.setFocusableInTouchMode(true);
                 userNameInput.setCursorVisible(true);
@@ -322,9 +325,17 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
     }
 
     @Override
-    public void onItemClick(int position, String dayText) {
-        if (dayText.equals("")) {
-            showToast("Selected date : " + dayText + " " + monthYearFromDate(selectedDate));
+    public void onItemClick(int position, Plat plat) {
+        if (!isModifierMode) {
+            if (plat != null) {
+                // Rediriger vers PlatActivity avec l'ID du plat
+                Intent intent = new Intent(ProfilGaleryActivity.this, PlatActivity.class);
+                intent.putExtra("postId", plat.getIdP());
+                startActivity(intent);
+            } else {
+                // Afficher un message si le plat est null
+                showToast("Pas de recette pour ce jour");
+            }
         }
     } //******************** FIN PARTIE CALENDRIER / GALERIE***************************************
 

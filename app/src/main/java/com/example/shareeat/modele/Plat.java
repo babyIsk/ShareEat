@@ -8,6 +8,7 @@ import java.sql.Date;
 
 
 public class Plat {
+
     int idP;
     int idUtilisateur;
 
@@ -32,6 +33,9 @@ public class Plat {
 
     public void setIdP(int idP) {
         this.idP = idP;
+    }
+    public int getIdP() {
+        return idP;
     }
 
     public String getTitreP() {

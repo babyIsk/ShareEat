@@ -9,18 +9,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shareeat.OnItemListener;
+import com.example.shareeat.ProfilGaleryActivity;
 import com.example.shareeat.R;
 import com.example.shareeat.modele.Plat;
 import com.squareup.picasso.Picasso;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class GaleryAdapter extends RecyclerView.Adapter<GaleryAdapter.ViewHolder> {
@@ -70,6 +68,15 @@ public class GaleryAdapter extends RecyclerView.Adapter<GaleryAdapter.ViewHolder
 
                     Log.d("GaleryAdapter", "Plat non null : " + plat);
                     Picasso.get().load("https://shareeat.alwaysdata.net/photoRecette/"+plat.getImageUrl()).into(holder.imageRecette);
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (onItemListener != null) {
+                                //int pos = getAbsoluteAdapterPosition();
+                                onItemListener.onItemClick(recettePosition, plat);
+                            }
+                        }
+                    });
                 } else {
                     Log.e("GaleryAdapter", "Plat est null ou son URL est null pour la position : " + recettePosition);
                     // Faites quelque chose pour gérer cette situation, par exemple, afficher une image par défaut ou ne rien faire.
@@ -110,14 +117,13 @@ public class GaleryAdapter extends RecyclerView.Adapter<GaleryAdapter.ViewHolder
 
             dayOfMonth = itemView.findViewById(R.id.tvCellDay);
             this.onItemListener = onItemListener;
-            itemView.setOnClickListener(this);
 
             imageRecette = itemView.findViewById(R.id.imgPlatCell);
         }
 
         @Override
         public void onClick(View view) {
-            onItemListener.onItemClick(getAbsoluteAdapterPosition(), (String) dayOfMonth.getText());
+
         }
     }
 }
