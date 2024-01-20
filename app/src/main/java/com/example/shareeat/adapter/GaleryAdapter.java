@@ -91,7 +91,6 @@ public class GaleryAdapter extends RecyclerView.Adapter<GaleryAdapter.ViewHolder
         this.daysOfMonth = daysOfMonth;
         notifyDataSetChanged();
     }
-
     public void setRecettesPourChaqueJour(List<Plat> recettes) {
         this.recettesPourChaqueJour = recettes;
         notifyDataSetChanged();

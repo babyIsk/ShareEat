@@ -295,7 +295,6 @@ public class ConnexionBD {
         List<Plat> recettes = new ArrayList<>();
         Log.d("ConnexionBD", "Début de la méthode getTousRecetteByIdUser");
         try {
-            Log.d("ConnexionBD", "ID Utilisateur : " + utilisateur.getIdUtilisateur());
             for (String formattedDate : dates) {
                 Log.d("ConnexionBD", "Formatted Date : " + formattedDate);
                 pStmRecetteByIdAndDate.setInt(1, utilisateur.getIdUtilisateur());
@@ -317,7 +316,6 @@ public class ConnexionBD {
                     plat.setDescriptionP(description);
                     plat.setDate(dateRecette);
                     plat.setImgRecette(imageRecette);
-                    plat.setAPostePlat(true);
 
                     recettes.add(plat);
                 }

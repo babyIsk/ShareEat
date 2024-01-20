@@ -299,7 +299,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/add_btn_border_gray"
         android:padding="15dp"
-        android:layout_marginVertical="20dp"
+        android:layout_marginVertical=" 20dp"
         android:text="Déconnexion"
         android:textAllCaps="false"
         android:textColor="@color/rouge_shareeat"

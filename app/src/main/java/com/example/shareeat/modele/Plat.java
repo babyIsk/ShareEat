@@ -9,7 +9,6 @@ public class Plat {
     String titreP;
     String descriptionP;
     private List<Ingredient> ingredientsDuPlat;
-    private boolean aPostePlat;
     String date;
     String imgRecette;
 
@@ -21,7 +20,6 @@ public class Plat {
         this.date = date;
         this.imgRecette = imgRecette;
         this.ingredientsDuPlat = new ArrayList<>();
-        this.aPostePlat = false;
     }
 
     //public Plat(int idP, int idUtilisateur, String titreP, String descriptionP, String date, String imgRecette, List<Ingredient> ingrédients) {
@@ -79,10 +77,4 @@ public class Plat {
         this.date = date;
     }
 
-    public boolean isAPostePlat() {
-        return aPostePlat;
-    }
-    public void setAPostePlat(boolean aPostePlat) {
-        this.aPostePlat = aPostePlat;
-    }
 }

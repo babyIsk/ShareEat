@@ -91,7 +91,6 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
             throw new RuntimeException(e);
         }
 
-
         //**************Partie liste des ingrédients ************************************
         ingrRecyclerView = (RecyclerView) findViewById(R.id.listIngrRecyclerView);
 
