@@ -36,6 +36,7 @@ public class InscriptionActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
+
         viewFlipper = findViewById(R.id.view_flipperInscription);
         prenomEditText = findViewById(R.id.prenomEditText);
         nomEditText = findViewById(R.id.nomEditText);

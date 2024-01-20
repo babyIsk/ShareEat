@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public class ConnexionBD {
@@ -34,6 +34,7 @@ public class ConnexionBD {
     private PreparedStatement pStmGetUtilisateur;
     PreparedStatement pStmUpdateUser;
     private PreparedStatement pStmRecetteByIdAndDate;
+    private PreparedStatement pStmRecetteAccueil;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -62,6 +63,7 @@ public class ConnexionBD {
         pStmRecetteById = conn.prepareStatement("SELECT * FROM Recette WHERE IdRecette = ?");
         pStmGetLatestRecipeId = conn.prepareStatement("SELECT LAST_INSERT_ID() AS LatestRecipeId");
         pStmGetUtilisateur = conn.prepareStatement("SELECT * FROM Utilisateurs WHERE IdUtilisateur = ?");
+        pStmRecetteAccueil = conn.prepareStatement("SELECT * FROM Recette WHERE IdUtilisateur <> ?");
         pStmUpdateUser = conn.prepareStatement("UPDATE Utilisateurs SET Prenom = ?, Pseudo = ?, Bio = ?, Photo = ? WHERE IdUtilisateur = ?");
         pStmRecetteByIdAndDate = conn.prepareStatement("SELECT * FROM Recette WHERE IdUtilisateur = ? AND Date = ?");
     }
@@ -130,6 +132,36 @@ public class ConnexionBD {
         return null;
     }
 
+    public List<Plat> getRecetteAccueil(int userId){
+        List<Plat> plats = new ArrayList<>();
+        try {
+            pStmRecetteAccueil.setInt(1, userId);  // Utilisation de la déclaration pStmRecetteAccueil spécifique aux recettes
+            ResultSet resultSet = pStmRecetteAccueil.executeQuery();
+            while (resultSet.next()) {
+                Plat plat = new Plat(resultSet.getInt("IdRecette"),
+                        resultSet.getInt("IdUtilisateur"),
+                        resultSet.getString("Titre"),
+                        resultSet.getString("Description"),
+                        resultSet.getDate("Date"),
+                        resultSet.getString("ImageRecette"));
+                plats.add(plat);
+
+                if (plats.isEmpty()) {
+                    Log.d("PlatDebug", "La liste de plats est vide");
+                } else {
+                    for (Plat plast : plats) {
+                        Log.d("PlatDebug", "Titre du plat : " + plast.getTitreP());
+                    }
+                }
+            }
+            return plats;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     public Message sendMessage(int userId, int contactId,String message){
         try {
             pStmEnvoieMessage.setInt(1,userId);
@@ -179,25 +211,18 @@ public class ConnexionBD {
         this.pStmDeleteIngr.executeUpdate();
     }
 
-    public void ajouterRecette(int idUtilisateur, String titre, String description, String date, String imageUri) throws SQLException {
+    public void ajouterRecette(int idUtilisateur, String titre, String description, Date date, String imageUri) throws SQLException {
         try {
             Log.d("ConnexionBD", "Ajout de recette - ID utilisateur : " + idUtilisateur);
             pStmAddPlat.setInt(1, idUtilisateur);
             pStmAddPlat.setString(2, titre);
             pStmAddPlat.setString(3, description);
 
-            // Formater la date dans le format attendu par la base de données
-            SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
-            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-            Date parsedDate = inputFormat.parse(date);
-            String formattedDate = outputFormat.format(parsedDate);
-
-            pStmAddPlat.setString(4, formattedDate);
+            pStmAddPlat.setDate(4, new java.sql.Date(date.getTime())); // Utilise java.sql.Date pour la compatibilité avec JDBC
             pStmAddPlat.setString(5, imageUri);
             pStmAddPlat.executeUpdate();
             Log.d("ConnexionBD", "Recette ajoutée avec succès !");
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException e) {
             Log.e("ConnexionBD", "Erreur lors de l'ajout de la recette : " + e.getMessage());
             e.printStackTrace();
         }
@@ -213,7 +238,7 @@ public class ConnexionBD {
                     int idUtilisateur = res.getInt("IdUtilisateur");
                     String titre = res.getString("Titre");
                     String description = res.getString("Description");
-                    String date = res.getString("Date");
+                    Date date = res.getDate("Date");
                     String imageRecette = res.getString("ImageRecette");
 
                     // Créer et retourner un objet Recette avec les données récupérées
@@ -224,6 +249,7 @@ public class ConnexionBD {
                     plat.setDescriptionP(description);
                     plat.setDate(date);
                     plat.setImgRecette(imageRecette);
+
                     return plat;
                 }
             } catch (SQLException ex) {
@@ -305,8 +331,9 @@ public class ConnexionBD {
                     int idRecette = res.getInt("IdRecette");
                     String titre = res.getString("Titre");
                     String description = res.getString("Description");
-                    String dateRecette = res.getString("Date");
+                    Date dateRecette = res.getDate("Date");
                     String imageRecette = res.getString("ImageRecette");
+
 
                     Plat plat = new Plat(idRecette, utilisateur.getIdUtilisateur(), titre, description, dateRecette, imageRecette);
                     plat.setIdP(idRecette);

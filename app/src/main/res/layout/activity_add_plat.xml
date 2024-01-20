@@ -32,7 +32,7 @@
             android:layout_marginEnd="10dp"
             android:background="#00000000"
             android:src="@drawable/baseline_person_24"
-            app:tint="@color/toolbar_color" />
+            app:tint="@color/black" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -51,11 +51,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <!-- background="@null" va supprimer toute indication visuelle de clic -->
-
-            <!-- la bordure du style/encadre carre de l'image (strokeWith, strokeColor) sont obetenu
-            grace a l'ajout d'une librairie dans le gradle -->
 
             <EditText
                 android:id="@+id/dateFormAjoutPlat"
@@ -78,8 +73,8 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/addImgPlat"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
                 android:background="@color/rouge_shareeat_transparent"
                 android:padding="3dp"
                 android:src="@drawable/icone_img"
@@ -177,7 +172,7 @@
                 android:contentDescription="TODO"
                 app:layout_constraintBottom_toTopOf="@+id/dateFormAjoutPlat"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.749"
+                app:layout_constraintHorizontal_bias="0.876"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/addImgPlat"
                 app:layout_constraintVertical_bias="1.0"
@@ -227,7 +222,7 @@
         android:background="@color/gris"
         app:itemActiveIndicatorStyle="@null"
         app:itemIconSize="35dp"
-        app:itemIconTint="@color/toolbar_color"
+        app:itemIconTint="@color/black"
         app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

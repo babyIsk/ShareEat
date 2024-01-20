@@ -1,18 +1,23 @@
 package com.example.shareeat.modele;
 
+
 import java.util.ArrayList;
 import java.util.List;
+
+import java.sql.Date;
+
 
 public class Plat {
     int idP;
     int idUtilisateur;
+
     String titreP;
     String descriptionP;
     private List<Ingredient> ingredientsDuPlat;
-    String date;
     String imgRecette;
+    private Date date;
 
-    public Plat(int idP, int idUtilisateur, String titreP, String descriptionP, String date, String imgRecette) {
+    public Plat(int idP, int idUtilisateur, String titreP, String descriptionP, Date date, String imgRecette) {
         this.idP = idP;
         this.idUtilisateur = idUtilisateur;
         this.titreP = titreP;
@@ -21,16 +26,10 @@ public class Plat {
         this.imgRecette = imgRecette;
         this.ingredientsDuPlat = new ArrayList<>();
     }
-    //public Plat(int idP, int idUtilisateur, String titreP, String descriptionP, String date, String imgRecette, List<Ingredient> ingrédients) {
-        //this.idP = idP;
-        //this.idUtilisateur = idUtilisateur;
-        //this.titreP = titreP;
-        //this.descriptionP = descriptionP;
-        //this.date = date;
-        //this.imgRecette = imgRecette;
-        //this.ingredientsDuPlat = ingrédients;
-        //this.aPostePlat = false;
-    //}
+
+    public int getIdUtilisateur() { return idUtilisateur; }
+
+
     public void setIdP(int idP) {
         this.idP = idP;
     }
@@ -69,10 +68,10 @@ public class Plat {
         this.imgRecette = imageRecette;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

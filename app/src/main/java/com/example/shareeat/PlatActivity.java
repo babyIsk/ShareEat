@@ -82,12 +82,12 @@ public class PlatActivity extends Activity {
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
             try {
-                Date date = inputFormat.parse(plat.getDate());
+                Date date = plat.getDate();
                 String formattedDate = outputFormat.format(date);
                 dateAjout.setText(formattedDate);
             } catch (Exception e) {
                 e.printStackTrace();
-                dateAjout.setText(plat.getDate()); // cas : erreur, afficher la date brute
+                dateAjout.setText(plat.getDate().toString()); // cas : erreur, afficher la date brute
             }
 
             Picasso.get().load("https://shareeat.alwaysdata.net/photoRecette/"+plat.getImageUrl()).into(imgP);
