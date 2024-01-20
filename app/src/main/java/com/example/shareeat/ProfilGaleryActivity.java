@@ -76,6 +76,8 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
+            //Désactive le geste de retour pour cette activité spécifique
+            getActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
         // Références aux vues
@@ -192,6 +194,14 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
                 btnEnregistrer.setVisibility(View.GONE);
                 btnAddPhoto.setVisibility(View.GONE);
                 btnDeconnexion.setEnabled(true);
+            }
+        });
+
+        btnDeconnexion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Appeler la méthode pour gérer la déconnexion
+                deconnexion();
             }
         });
 
@@ -424,5 +434,15 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
 
             imgProfil.setImageURI(selectedImageUri);
         }
+    }
+
+    private void deconnexion() {
+        // Efface les données de l'utilisateur stockées dans UserDataSingleton
+        UserDataSingleton.getInstance().setUtilisateur(null);
+
+        // Redirection vers ConnexionActivity
+        Intent intent = new Intent(ProfilGaleryActivity.this, ConnexionActivity.class);
+        startActivity(intent);
+        finish(); // Termine l'activité actuelle
     }
 }
