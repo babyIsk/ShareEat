@@ -95,7 +95,6 @@ public class GaleryAdapter extends RecyclerView.Adapter<GaleryAdapter.ViewHolder
         this.recettesPourChaqueJour = recettes;
         notifyDataSetChanged();
     }
-
     @Override
     public int getItemCount() {
         return daysOfMonth.size();

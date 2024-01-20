@@ -290,7 +290,6 @@ public class ConnexionBD {
             Log.e("ConnexionBD", "Erreur lors de la mise à jour de l'utilisateur dans la base de données.");
         }
     }
-
     public List<Plat> getTousRecetteByIdUser(Utilisateur utilisateur, ArrayList<String> dates) {
         List<Plat> recettes = new ArrayList<>();
         Log.d("ConnexionBD", "Début de la méthode getTousRecetteByIdUser");

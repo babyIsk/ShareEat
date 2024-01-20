@@ -21,7 +21,6 @@ public class Plat {
         this.imgRecette = imgRecette;
         this.ingredientsDuPlat = new ArrayList<>();
     }
-
     //public Plat(int idP, int idUtilisateur, String titreP, String descriptionP, String date, String imgRecette, List<Ingredient> ingrédients) {
         //this.idP = idP;
         //this.idUtilisateur = idUtilisateur;

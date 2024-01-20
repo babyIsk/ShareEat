@@ -148,7 +148,6 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
                         .start();
             }
         });
-
         btnEnregistrer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
