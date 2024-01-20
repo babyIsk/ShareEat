@@ -3,6 +3,8 @@ package com.example.shareeat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -35,7 +37,10 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
-        getSupportActionBar().hide();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
 
         // Récupérer l'utilisateur à partir du singleton
         user = UserDataSingleton.getInstance().getUtilisateur();

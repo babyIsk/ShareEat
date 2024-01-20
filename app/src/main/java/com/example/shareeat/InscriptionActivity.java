@@ -1,5 +1,6 @@
 package com.example.shareeat;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -31,7 +32,10 @@ public class InscriptionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
-        getSupportActionBar().hide();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
         viewFlipper = findViewById(R.id.view_flipperInscription);
         prenomEditText = findViewById(R.id.prenomEditText);
         nomEditText = findViewById(R.id.nomEditText);

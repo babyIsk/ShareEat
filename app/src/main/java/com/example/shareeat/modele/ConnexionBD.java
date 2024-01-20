@@ -217,7 +217,7 @@ public class ConnexionBD {
                     String imageRecette = res.getString("ImageRecette");
 
                     // Créer et retourner un objet Recette avec les données récupérées
-                    Plat plat = new Plat();
+                    Plat plat = new Plat(idP, idUtilisateur, titre, description, date, imageRecette);
                     plat.setIdP(idP);
                     plat.setIdUtilisateur(idUtilisateur);
                     plat.setTitreP(titre);
@@ -294,11 +294,13 @@ public class ConnexionBD {
     public List<Plat> getTousRecetteByIdUser(Utilisateur utilisateur, ArrayList<String> dates) {
         List<Plat> recettes = new ArrayList<>();
         Log.d("ConnexionBD", "Début de la méthode getTousRecetteByIdUser");
-        Log.d("ConnexionBD", "Requête SQL : " + pStmRecetteByIdAndDate);
         try {
-            pStmRecetteByIdAndDate.setInt(1, utilisateur.getIdUtilisateur());
+            Log.d("ConnexionBD", "ID Utilisateur : " + utilisateur.getIdUtilisateur());
             for (String formattedDate : dates) {
+                Log.d("ConnexionBD", "Formatted Date : " + formattedDate);
+                pStmRecetteByIdAndDate.setInt(1, utilisateur.getIdUtilisateur());
                 pStmRecetteByIdAndDate.setString(2, formattedDate);
+                Log.d("ConnexionBD", "Requête SQL : " + pStmRecetteByIdAndDate);
                 ResultSet res = pStmRecetteByIdAndDate.executeQuery();
 
                 while (res.next()) {
@@ -308,7 +310,7 @@ public class ConnexionBD {
                     String dateRecette = res.getString("Date");
                     String imageRecette = res.getString("ImageRecette");
 
-                    Plat plat = new Plat();
+                    Plat plat = new Plat(idRecette, utilisateur.getIdUtilisateur(), titre, description, dateRecette, imageRecette);
                     plat.setIdP(idRecette);
                     plat.setIdUtilisateur(utilisateur.getIdUtilisateur());
                     plat.setTitreP(titre);

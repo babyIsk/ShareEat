@@ -1,15 +1,39 @@
 package com.example.shareeat.modele;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Plat {
     int idP;
     int idUtilisateur;
     String titreP;
     String descriptionP;
-    String[] ingrédients;
+    private List<Ingredient> ingredientsDuPlat;
     private boolean aPostePlat;
     String date;
     String imgRecette;
 
+    public Plat(int idP, int idUtilisateur, String titreP, String descriptionP, String date, String imgRecette) {
+        this.idP = idP;
+        this.idUtilisateur = idUtilisateur;
+        this.titreP = titreP;
+        this.descriptionP = descriptionP;
+        this.date = date;
+        this.imgRecette = imgRecette;
+        this.ingredientsDuPlat = new ArrayList<>();
+        this.aPostePlat = false;
+    }
+
+    //public Plat(int idP, int idUtilisateur, String titreP, String descriptionP, String date, String imgRecette, List<Ingredient> ingrédients) {
+        //this.idP = idP;
+        //this.idUtilisateur = idUtilisateur;
+        //this.titreP = titreP;
+        //this.descriptionP = descriptionP;
+        //this.date = date;
+        //this.imgRecette = imgRecette;
+        //this.ingredientsDuPlat = ingrédients;
+        //this.aPostePlat = false;
+    //}
     public void setIdP(int idP) {
         this.idP = idP;
     }
@@ -30,12 +54,12 @@ public class Plat {
         this.descriptionP = descriptionP;
     }
 
-    public String[] getIngrédients() {
-        return ingrédients;
+    public List<Ingredient> getIngrédients() {
+        return ingredientsDuPlat;
     }
 
-    public void setIngrédients(String[] ingrédients) {
-        this.ingrédients = ingrédients;
+    public void setIngrédients(List<Ingredient> ingrédients) {
+        this.ingredientsDuPlat = ingrédients;
     }
 
     public void setIdUtilisateur(int idUtilisateur) {
