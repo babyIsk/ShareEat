@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public class ConnexionBD {
@@ -329,25 +329,18 @@ public class ConnexionBD {
         fermerConnexion();
     }
 
-    public void ajouterRecette(int idUtilisateur, String titre, String description, String date, String imageUri) throws SQLException {
+    public void ajouterRecette(int idUtilisateur, String titre, String description, Date date, String imageUri) throws SQLException {
         try {
             Log.d("ConnexionBD", "Ajout de recette - ID utilisateur : " + idUtilisateur);
             pStmAddPlat.setInt(1, idUtilisateur);
             pStmAddPlat.setString(2, titre);
             pStmAddPlat.setString(3, description);
 
-            // Formater la date dans le format attendu par la base de données
-            SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
-            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-            Date parsedDate = inputFormat.parse(date);
-            String formattedDate = outputFormat.format(parsedDate);
-
-            pStmAddPlat.setString(4, formattedDate);
+            pStmAddPlat.setDate(4, new java.sql.Date(date.getTime())); // Utilise java.sql.Date pour la compatibilité avec JDBC
             pStmAddPlat.setString(5, imageUri);
             pStmAddPlat.executeUpdate();
             Log.d("ConnexionBD", "Recette ajoutée avec succès !");
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException e) {
             Log.e("ConnexionBD", "Erreur lors de l'ajout de la recette : " + e.getMessage());
             e.printStackTrace();
         }
@@ -364,11 +357,20 @@ public class ConnexionBD {
                     int idUtilisateur = res.getInt("IdUtilisateur");
                     String titre = res.getString("Titre");
                     String description = res.getString("Description");
+                    Date date = res.getDate("Date");
                     String imageRecette = res.getString("ImageRecette");
 
                     // Créer et retourner un objet Recette avec les données récupérées
                     Plat plat = new Plat(idP,idUtilisateur,titre,description,res.getDate("Date"),imageRecette);
                     fermerConnexion();
+
+                    /*Plat plat = new Plat(idP, idUtilisateur, titre, description, date, imageRecette);
+                    plat.setIdP(idP);
+                    plat.setIdUtilisateur(idUtilisateur);
+                    plat.setTitreP(titre);
+                    plat.setDescriptionP(description);
+                    plat.setDate(date);
+                    plat.setImgRecette(imageRecette);*/
                     return plat;
                 }
             } catch (SQLException ex) {
@@ -439,26 +441,32 @@ public class ConnexionBD {
 
         fermerConnexion();
     }
-
     public List<Plat> getTousRecetteByIdUser(Utilisateur utilisateur, ArrayList<String> dates) {
         List<Plat> recettes = new ArrayList<>();
         Log.d("ConnexionBD", "Début de la méthode getTousRecetteByIdUser");
-        Log.d("ConnexionBD", "Requête SQL : " + pStmRecetteByIdAndDate);
         try {
-            pStmRecetteByIdAndDate.setInt(1, utilisateur.getIdUtilisateur());
             for (String formattedDate : dates) {
+                Log.d("ConnexionBD", "Formatted Date : " + formattedDate);
+                pStmRecetteByIdAndDate.setInt(1, utilisateur.getIdUtilisateur());
                 pStmRecetteByIdAndDate.setString(2, formattedDate);
+                Log.d("ConnexionBD", "Requête SQL : " + pStmRecetteByIdAndDate);
                 ResultSet res = pStmRecetteByIdAndDate.executeQuery();
 
                 while (res.next()) {
                     int idRecette = res.getInt("IdRecette");
                     String titre = res.getString("Titre");
                     String description = res.getString("Description");
-                    String dateRecette = res.getString("Date");
+                    Date dateRecette = res.getDate("Date");
                     String imageRecette = res.getString("ImageRecette");
 
-                    Plat plat = new Plat(idRecette,utilisateur.getIdUtilisateur(),titre,description,res.getDate("Date"),imageRecette);
-                    plat.setAPostePlat(true);
+
+                    Plat plat = new Plat(idRecette, utilisateur.getIdUtilisateur(), titre, description, dateRecette, imageRecette);
+                    plat.setIdP(idRecette);
+                    plat.setIdUtilisateur(utilisateur.getIdUtilisateur());
+                    plat.setTitreP(titre);
+                    plat.setDescriptionP(description);
+                    plat.setDate(dateRecette);
+                    plat.setImgRecette(imageRecette);
 
                     recettes.add(plat);
                 }

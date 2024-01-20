@@ -97,7 +97,6 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
             throw new RuntimeException(e);
         }
 
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -155,11 +154,15 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
                 String titre = titreP.getText().toString();
                 String description = descriptionP.getText().toString();
 
-                String date = dateAjout.getText().toString();
-                // Formater la date dans le format attendu par la méthode ajouterRecette
-                SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
-                SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
-
+                String dateStr = dateAjout.getText().toString();
+                Date date = null;
+                try {
+                    date = new SimpleDateFormat("dd/MM/yyyy").parse(dateStr);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    showToast("Erreur de conversion de la date.");
+                    return;
+                }
                 // Garantit que si selectedImageUri est null, une chaîne vide sera utilisée à la place,
                 // évitant ainsi la NullPointerException
                 String imageUri = (selectedImageUri != null) ? selectedImageUri.getLastPathSegment() : "";
@@ -173,15 +176,15 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
                     return;
                 } else if (titre.isEmpty()) {
                     showToast("Veuillez entrer un titre pour votre recette.");
-                    return; // Sortir de la méthode sans enregistrer si le titre est vide
+                    return;
                 } else if (utilisateur != null) {
                     // Enregistrement les données dans la table Recette
                     try {
                         uploadImageToServer(selectedImageUri);
-                        Date parsedDate = inputFormat.parse(date);
-                        String formattedDate = outputFormat.format(parsedDate);
-                        connBD.ajouterRecette(utilisateur.getIdUtilisateur(), titre, description, formattedDate, imageUri);
-                    } catch (SQLException | ParseException | IOException e) {
+                        // Convertir java.util.Date en java.sql.Date
+                        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                        connBD.ajouterRecette(utilisateur.getIdUtilisateur(), titre, description, sqlDate, imageUri);
+                    } catch (SQLException | IOException e) {
                         throw new RuntimeException(e);
                     }
 

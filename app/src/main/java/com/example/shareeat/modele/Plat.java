@@ -1,16 +1,22 @@
 package com.example.shareeat.modele;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 import java.sql.Date;
 
+
 public class Plat {
+
     int idP;
     int idUtilisateur;
-    private String titreP;
-    private String descriptionP;
-    private String[] ingrédients;
-    private boolean aPostePlat;
+
+    String titreP;
+    String descriptionP;
+    private List<Ingredient> ingredientsDuPlat;
+    String imgRecette;
     private Date date;
-    private String imgRecette;
 
     public Plat(int idP, int idUtilisateur, String titreP, String descriptionP, Date date, String imgRecette) {
         this.idP = idP;
@@ -19,12 +25,17 @@ public class Plat {
         this.descriptionP = descriptionP;
         this.date = date;
         this.imgRecette = imgRecette;
+        this.ingredientsDuPlat = new ArrayList<>();
     }
 
     public int getIdUtilisateur() { return idUtilisateur; }
 
+
     public void setIdP(int idP) {
         this.idP = idP;
+    }
+    public int getIdP() {
+        return idP;
     }
 
     public String getTitreP() {
@@ -43,12 +54,12 @@ public class Plat {
         this.descriptionP = descriptionP;
     }
 
-    public String[] getIngrédients() {
-        return ingrédients;
+    public List<Ingredient> getIngrédients() {
+        return ingredientsDuPlat;
     }
 
-    public void setIngrédients(String[] ingrédients) {
-        this.ingrédients = ingrédients;
+    public void setIngrédients(List<Ingredient> ingrédients) {
+        this.ingredientsDuPlat = ingrédients;
     }
 
     public void setIdUtilisateur(int idUtilisateur) {
@@ -68,10 +79,4 @@ public class Plat {
         this.date = date;
     }
 
-    public boolean isAPostePlat() {
-        return aPostePlat;
-    }
-    public void setAPostePlat(boolean aPostePlat) {
-        this.aPostePlat = aPostePlat;
-    }
 }

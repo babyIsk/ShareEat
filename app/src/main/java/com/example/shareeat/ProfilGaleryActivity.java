@@ -33,7 +33,6 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,7 +48,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-
 public class ProfilGaleryActivity extends AppCompatActivity implements OnItemListener {
 
     ImageView imgProfil;
@@ -66,6 +64,10 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
     private GaleryAdapter galeryAdapter;
     public ConnexionBD connBD;
     private Utilisateur utilisateurConnecte;
+    List<Plat> recettesPourChaqueJour = new ArrayList<>();
+    List<Plat> listeRecettesUtilisateur = new ArrayList<>();
+    private boolean isModifierMode = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,8 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
+            //Désactive le geste de retour pour cette activité spécifique
+            getActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
         // Références aux vues
@@ -103,12 +107,18 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
 
         // Appel de la fonction getUtilisateurById pour obtenir les données
         utilisateurConnecte = connBD.getUtilisateurById(utilisateur.getIdUtilisateur());
+        Log.d("ProfilGaleryActivity", "ID de l'utilisateur: " + utilisateurConnecte.getIdUtilisateur());
+
+        selectedDate = Calendar.getInstance();
+        Log.d("ProfilGaleryActivity", "Selected date initialized: " + selectedDate.getTime());
 
         updateUI(utilisateurConnecte);
 
         btnModifier.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isModifierMode = !isModifierMode; //pour le calendrier
+
                 // Rendre les EditText en mode non éditable
                 userNameInput.setFocusableInTouchMode(true);
                 userNameInput.setCursorVisible(true);
@@ -143,7 +153,6 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
                         .start();
             }
         });
-
         btnEnregistrer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -188,10 +197,28 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
             }
         });
 
+        btnDeconnexion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Appeler la méthode pour gérer la déconnexion
+                deconnexion();
+            }
+        });
+
         // *******************PARTIE CALENDRIER / GALERIE******************************************
-        selectedDate = Calendar.getInstance();
-        Log.d("ProfilGaleryActivity", "Selected date initialized: " + selectedDate.getTime());
         setMonthView();
+        try {
+            RecyclerView.LayoutManager layoutManager= new GridLayoutManager(getApplicationContext(), 7);
+            galeryRecyclerView.setLayoutManager(layoutManager);
+            galeryAdapter = new GaleryAdapter(this, daysInMonth, recettesPourChaqueJour, this);
+            galeryAdapter.setlisteRecettesUtilisateur(listeRecettesUtilisateur);
+            galeryAdapter.setDaysOfMonth(daysInMonth);
+            galeryAdapter.setRecettesPourChaqueJour(recettesPourChaqueJour);
+            galeryRecyclerView.setAdapter(galeryAdapter);
+            galeryAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Log.d("ProfilGaleryActivity", "Month view set for date: " + selectedDate.getTime());
         btnFlecheRetour.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,12 +255,12 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
         Log.d("ProfilGaleryActivity", "Days in Month formatted: " + TextUtils.join(", ", formattedDays));
 
         // Afficher les recettes propre à l'utilisateur qu'il a posté en fonction de chaque jour du calendrier
-        List<Plat> recettesPourChaqueJour = new ArrayList<>();
-        List<Plat> listeRecettesUtilisateur = connBD.getTousRecetteByIdUser(utilisateurConnecte, formattedDays);
+        listeRecettesUtilisateur = connBD.getTousRecetteByIdUser(utilisateurConnecte, formattedDays);
         Log.d("ProfilGaleryActivity", "Liste des recettes utilisateur : " + listeRecettesUtilisateur);
         // Pour chaque date dans le calendrier, récupérez la recette de l'utilisateur pour cette date
         for (String dateCalendrier : formattedDays) {
             Plat recettePourCetteDate = null;
+            Log.d("ProfilGaleryActivity", "Recette/ plat : " + recettePourCetteDate);
             Log.d("ProfilGaleryActivity", "Date: " + dateCalendrier);
 
             // Parcourez la liste des recettes de l'utilisateur
@@ -244,26 +271,17 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
 
 
                 // Comparez les dates en les convertissant au format souhaité
-                Log.d("ProfilGaleryActivity", "Recette: " + recette);
                 String recetteFormattedDate = new SimpleDateFormat("yyyy/MM/dd").format(recetteDate);
-                if (formattedDays.contains(recetteFormattedDate)) {
+                if (dateCalendrier.equals(recetteFormattedDate)) {
                     recettePourCetteDate = recette;
-                    Log.d("ProfilGaleryActivity", "Recette trouvée pour la date: " + formattedDays);
+                    Log.d("ProfilGaleryActivity", "Recette/ plat : " + recettePourCetteDate);
+                    Log.d("ProfilGaleryActivity", "Recette trouvée pour la date: " + recetteFormattedDate);
                     break;
                 }
             }
-
             // Ajoutez la recette (ou null) à la liste
             recettesPourChaqueJour.add(recettePourCetteDate);
         }
-
-        galeryAdapter = new GaleryAdapter(this, daysInMonth, recettesPourChaqueJour, this);
-        RecyclerView.LayoutManager layoutManager= new GridLayoutManager(getApplicationContext(), 7);
-        galeryRecyclerView.setLayoutManager(layoutManager);
-        galeryRecyclerView.setAdapter(galeryAdapter);
-        galeryAdapter.setlisteRecettesUtilisateur(listeRecettesUtilisateur);
-        galeryAdapter.notifyDataSetChanged();
-
     }
 
     private ArrayList<String> daysInMonthArray(Calendar  date) {
@@ -295,20 +313,39 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
     public void previousMonthAction(View view) {
         Log.d("ProfilGaleryActivity", "Previous Month Clicked");
         selectedDate.add(Calendar.MONTH, -1);
+        recettesPourChaqueJour.clear();
         setMonthView();
+        galeryAdapter.setDaysOfMonth(daysInMonth);
+        galeryAdapter.setRecettesPourChaqueJour(recettesPourChaqueJour);
+        galeryAdapter.setlisteRecettesUtilisateur(listeRecettesUtilisateur);
+        Log.d("ProfilGaleryActivity", "daysInMonth : " + daysInMonth);
+        Log.d("ProfilGaleryActivity", "listeRecettesUtilisateur : " + daysInMonth);
         galeryAdapter.notifyDataSetChanged();
     }
 
     public void nextMonthAction(View view) {
         Log.d("ProfilGaleryActivity", "Next Month Clicked");
         selectedDate.add(Calendar.MONTH, 1);
+        recettesPourChaqueJour.clear();
         setMonthView();
+        galeryAdapter.setDaysOfMonth(daysInMonth);
+        galeryAdapter.setRecettesPourChaqueJour(recettesPourChaqueJour);
+        galeryAdapter.setlisteRecettesUtilisateur(listeRecettesUtilisateur);
+        galeryAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onItemClick(int position, String dayText) {
-        if (dayText.equals("")) {
-            showToast("Selected date : " + dayText + " " + monthYearFromDate(selectedDate));
+    public void onItemClick(int position, Plat plat) {
+        if (!isModifierMode) {
+            if (plat != null) {
+                // Rediriger vers PlatActivity avec l'ID du plat
+                Intent intent = new Intent(ProfilGaleryActivity.this, PlatActivity.class);
+                intent.putExtra("postId", plat.getIdP());
+                startActivity(intent);
+            } else {
+                // Afficher un message si le plat est null
+                showToast("Pas de recette pour ce jour");
+            }
         }
     } //******************** FIN PARTIE CALENDRIER / GALERIE***************************************
 
@@ -397,5 +434,15 @@ public class ProfilGaleryActivity extends AppCompatActivity implements OnItemLis
 
             imgProfil.setImageURI(selectedImageUri);
         }
+    }
+
+    private void deconnexion() {
+        // Efface les données de l'utilisateur stockées dans UserDataSingleton
+        UserDataSingleton.getInstance().setUtilisateur(null);
+
+        // Redirection vers ConnexionActivity
+        Intent intent = new Intent(ProfilGaleryActivity.this, ConnexionActivity.class);
+        startActivity(intent);
+        finish(); // Termine l'activité actuelle
     }
 }

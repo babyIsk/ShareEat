@@ -1,12 +1,14 @@
 package com.example.shareeat;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class StartAppActivity extends AppCompatActivity {
 
@@ -19,12 +21,15 @@ public class StartAppActivity extends AppCompatActivity {
             actionBar.hide();
         }
 
-
         // Référence à l'ImageView
         ImageView logoImageView = findViewById(R.id.logoImageView);
+        ConstraintLayout constraintLayout = findViewById(R.id.mainLayout);
 
-        // Animation de l'ImageView
-        logoImageView.animate().translationY(-100f).setDuration(1000).start();
+        //Animation du background
+        AnimationDrawable animationDrawable = (AnimationDrawable) constraintLayout.getBackground();
+        animationDrawable.setEnterFadeDuration(3000);
+        animationDrawable.setExitFadeDuration(3000);
+        animationDrawable.start();
 
         // Handler pour déclencher une action après un délai
         new Handler().postDelayed(new Runnable() {
@@ -35,6 +40,6 @@ public class StartAppActivity extends AppCompatActivity {
                 finish();
                 // ou masquage du layout temporaire : findViewById(R.id.yourLayoutId).setVisibility(View.GONE);
             }
-        }, 2000); // Délai de 2000 millisecondes (2 secondes)
+        }, 5000); // Délai de 2000 millisecondes (2 secondes)
     }
 }

@@ -21,7 +21,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/plat_img"
+            app:srcCompat="@drawable/fond_carte_plat_calendrier_gris"
             app:shapeAppearanceOverlay="@style/carre"
             app:strokeColor="@color/rouge_shareeat"
             app:strokeWidth="4dp"
