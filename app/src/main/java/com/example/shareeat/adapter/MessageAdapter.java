@@ -1,12 +1,18 @@
-package com.example.shareeat.modele;
+package com.example.shareeat.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.shareeat.R;
+import com.example.shareeat.modele.Message;
+import com.example.shareeat.modele.Utilisateur;
+import com.squareup.picasso.Picasso;
+
+import java.sql.SQLException;
 import java.util.List;
 
 

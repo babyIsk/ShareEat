@@ -44,26 +44,28 @@ public class AccueilActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
         listView = findViewById(R.id.recettes);
 
-        try {
-            connexionBD = new ConnexionBD();
-            if (connexionBD != null) {
-                List<Plat> plats = connexionBD.getRecetteAccueil(user.getIdUtilisateur());
-                if (plats != null) {
-                    RecetteAdapter recetteAdapter = new RecetteAdapter(this, plats, user);
-                    listView.setAdapter(recetteAdapter);
+        if (user != null) {
+            try {
+                connexionBD = new ConnexionBD();
+                if (connexionBD != null) {
+                    List<Plat> plats = connexionBD.getRecetteAccueil(user.getIdUtilisateur());
+                    if (plats != null) {
+                        RecetteAdapter recetteAdapter = new RecetteAdapter(this, plats, user);
+                        listView.setAdapter(recetteAdapter);
+                    } else {
+                        Log.d("PlatDebug", "La liste de plats est null");
+                    }
                 } else {
-                    // Gérez le cas où la liste de plats est null
-                    Log.d("PlatDebug", "La liste de plats est null");
+                    Log.d("PlatDebug", "La connexionBD est null");
                 }
-            } else {
-                // Gérez le cas où la connexionBD est null
-                Log.d("PlatDebug", "La connexionBD est null");
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException | ClassNotFoundException e) {
-            // Gérez les exceptions de manière appropriée (par exemple, affichez un message d'erreur)
-            e.printStackTrace();
+        } else {
+            // Gérez le cas où l'objet user est null
+            Log.d("PlatDebug", "L'objet user est null");
+            // Affichez un message d'erreur ou prenez une action appropriée
         }
-
 
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -77,32 +79,12 @@ public class AccueilActivity extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.nav_add) {
                     startActivity(new Intent(getApplicationContext(), AddPlatActivity.class));
                     return true;
+                } else if (item.getItemId() == R.id.nav_message) {
+                    startActivity(new Intent(getApplicationContext(), MPActivity.class));
+                    return true;
                 }
-
                 return false;
             }
         });
-    }
-
-    public List<Plat> getRecette(Utilisateur user) {
-        try {
-            ConnexionBD bd = new ConnexionBD();
-            List<Plat> plats = bd.getRecetteAccueil(user.getIdUtilisateur());
-
-            if (plats != null) {
-                for (Plat plat : plats) {
-                    Log.d("PlatDebug", "Titre du plat : " + plat.getTitreP());
-
-                }
-            } else {
-                Log.d("PlatDebug", "La liste de plats est null");
-            }
-            return plats;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

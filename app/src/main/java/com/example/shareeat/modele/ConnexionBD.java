@@ -35,6 +35,8 @@ public class ConnexionBD {
     PreparedStatement pStmUpdateUser;
     private PreparedStatement pStmRecetteByIdAndDate;
     private PreparedStatement pStmRecetteAccueil;
+    private PreparedStatement pStmDerniereConversation;
+    private PreparedStatement pStmDernierMessage;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -66,6 +68,55 @@ public class ConnexionBD {
         pStmRecetteAccueil = conn.prepareStatement("SELECT * FROM Recette WHERE IdUtilisateur <> ?");
         pStmUpdateUser = conn.prepareStatement("UPDATE Utilisateurs SET Prenom = ?, Pseudo = ?, Bio = ?, Photo = ? WHERE IdUtilisateur = ?");
         pStmRecetteByIdAndDate = conn.prepareStatement("SELECT * FROM Recette WHERE IdUtilisateur = ? AND Date = ?");
+        pStmDerniereConversation = conn.prepareStatement("SELECT U.*\n" +
+                "FROM Utilisateurs U\n" +
+                "LEFT JOIN (\n" +
+                "    SELECT IdReceiver AS IdUtilisateur\n" +
+                "    FROM Messagerie\n" +
+                "    WHERE IdSender = ?\n" +
+                "    UNION\n" +
+                "    SELECT IdSender AS IdUtilisateur\n" +
+                "    FROM Messagerie\n" +
+                "    WHERE IdReceiver = ?) M  ON U.IdUtilisateur = M.IdUtilisateur \n" +
+                "    WHERE U.IdUtilisateur <> ?\n" +
+                "\tORDER BY M.IdUtilisateur DESC , U.Pseudo ASC;");
+        pStmDernierMessage = conn.prepareStatement("SELECT *\n" +
+                "FROM Messagerie\n" +
+                "WHERE (IdSender = ? AND IdReceiver = ?) OR (IdSender = ? AND IdReceiver = ?)\n" +
+                "ORDER BY Heure DESC\n" +
+                "LIMIT 1;\n");
+    }
+
+    public void fermerConnexion() {
+        try {
+            // Close all prepared statements
+            if (pStmInscritpion != null) pStmInscritpion.close();
+            if (pStmEnvoieMessage != null) pStmEnvoieMessage.close();
+            if (pStmConnexion != null) pStmConnexion.close();
+            if (pStmMessage != null) pStmMessage.close();
+            if (pStmTousIngredients != null) pStmTousIngredients.close();
+            if (pStmAjoutIngr != null) pStmAjoutIngr.close();
+            if (pStmUpdateStatus != null) pStmUpdateStatus.close();
+            if (pStmUpdateIngr != null) pStmUpdateIngr.close();
+            if (pStmDeleteIngr != null) pStmDeleteIngr.close();
+            if (pStmAddPlat != null) pStmAddPlat.close();
+            if (pStmRecetteById != null) pStmRecetteById.close();
+            if (pStmGetLatestRecipeId != null) pStmGetLatestRecipeId.close();
+            if (pStmGetUtilisateur != null) pStmGetUtilisateur.close();
+            if (pStmUpdateUser != null) pStmUpdateUser.close();
+            if (pStmRecetteByIdAndDate != null) pStmRecetteByIdAndDate.close();
+            if (pStmRecetteAccueil != null) pStmRecetteAccueil.close();
+            if (pStmDerniereConversation != null) pStmDerniereConversation.close();
+            if (pStmDernierMessage != null) pStmDernierMessage.close();
+
+            // Close the database connection
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+                System.out.println("Connexion fermée avec succès.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la fermeture de la connexion : " + e.getMessage());
+        }
     }
 
     public Utilisateur inscription(String pseudo, String nom, String prenom, String email, String mdp) {
@@ -77,11 +128,13 @@ public class ConnexionBD {
             this.pStmInscritpion.setString(5, mdp);
             this.pStmInscritpion.executeUpdate();
             Utilisateur inscrit = new Utilisateur(prenom, nom, pseudo, email, mdp);
+            fermerConnexion();
             return inscrit;
         } catch (SQLException e) {
             System.out.println("Erreur impossible de procéder");
             e.printStackTrace();
         }
+        fermerConnexion();
         return null;
     }
 
@@ -102,6 +155,7 @@ public class ConnexionBD {
                         resultSet.getString("Photo")
                 );
                 System.out.println("Utilisateur trouvé : " + utilisateur);
+                fermerConnexion();
                 return utilisateur;
             } else {
                 System.out.println("Aucun utilisateur trouvé avec cet email et ce mot de passe.");
@@ -110,6 +164,7 @@ public class ConnexionBD {
             System.out.println("Erreur lors de la connexion");
             e.printStackTrace();
         }
+        fermerConnexion();
         return null;
     }
 
@@ -125,12 +180,38 @@ public class ConnexionBD {
                 Message message = new Message(resultSet.getInt("IdSender"),resultSet.getInt("IdReceiver"),resultSet.getString("Message"),resultSet.getTimestamp("Heure"));
                 messages.add(message);
             }
-            return messages;
+            // Fermer le ResultSet ici
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }/* finally {
+            // Fermer la connexion ici
+            fermerConnexion();
+        }*/
+        return messages;
+    }
+
+
+    public Message getDernierMessage(int userId, int contactId) {
+        try {
+            pStmDernierMessage.setInt(1, userId);
+            pStmDernierMessage.setInt(2, contactId);
+            pStmDernierMessage.setInt(3, contactId);
+            pStmDernierMessage.setInt(4, userId);
+            ResultSet resultSet = pStmDernierMessage.executeQuery();
+            if (resultSet.next()) {
+                Message message = new Message(resultSet.getInt("IdSender"), resultSet.getInt("IdReceiver"),
+                        resultSet.getString("Message"), resultSet.getTimestamp("Heure"));
+                fermerConnexion();
+                return message;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        fermerConnexion();
         return null;
     }
+
 
     public List<Plat> getRecetteAccueil(int userId){
         List<Plat> plats = new ArrayList<>();
@@ -154,10 +235,40 @@ public class ConnexionBD {
                     }
                 }
             }
+            fermerConnexion();
             return plats;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        fermerConnexion();
+        return null;
+    }
+
+    public List<Utilisateur> getMP(int userId){
+        List<Utilisateur> utilisateurs = new ArrayList<>();
+        try {
+            pStmDerniereConversation.setInt(1, userId);
+            pStmDerniereConversation.setInt(2, userId);
+            pStmDerniereConversation.setInt(3, userId);
+            ResultSet resultSet = pStmDerniereConversation.executeQuery();
+            while (resultSet.next()) {
+                Utilisateur utilisateur = new Utilisateur(
+                        resultSet.getInt("IdUtilisateur"),
+                        resultSet.getString("Prenom"),
+                        resultSet.getString("Nom"),
+                        resultSet.getString("Pseudo"),
+                        resultSet.getString("Mail"),
+                        resultSet.getString("Mdp"),
+                        resultSet.getString("Bio"),
+                        resultSet.getString("Photo")
+                );
+                utilisateurs.add(utilisateur);
+            }
+            return utilisateurs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        fermerConnexion();
         return null;
     }
 
@@ -169,10 +280,12 @@ public class ConnexionBD {
             pStmEnvoieMessage.setString(3,message);
             this.pStmEnvoieMessage.executeUpdate();
             Message m = new Message(userId, contactId,message);
+            fermerConnexion();
             return m;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        fermerConnexion();
         return null;
     }
 
@@ -185,12 +298,14 @@ public class ConnexionBD {
             String nom = res.getString("nom");
             listeIngrs.add(new Ingredient(id, status, nom));
         }
+        fermerConnexion();
         return listeIngrs;
     }
 
     public void ajouterIngr(String nom) throws SQLException  {
         this.pStmAjoutIngr.setString(1, nom);
         this.pStmAjoutIngr.executeUpdate();
+        fermerConnexion();
     }
 
     public void updateStatusIngr(int status, int idIngredient) throws SQLException {
@@ -198,17 +313,20 @@ public class ConnexionBD {
         this.pStmUpdateStatus.setInt(1, status);
         this.pStmUpdateStatus.setInt(2, idIngredient);
         this.pStmUpdateStatus.executeUpdate();
+        fermerConnexion();
     }
 
     public void updateIngredient(int idIngredient, String nom) throws SQLException {
         this.pStmUpdateIngr.setString(1, nom);
         this.pStmUpdateIngr.setInt(2, idIngredient);
         this.pStmUpdateIngr.executeUpdate();
+        fermerConnexion();
     }
 
     public void deleteIngredient(int idIngredient) throws SQLException {
         this.pStmDeleteIngr.setInt(1, idIngredient);
         this.pStmDeleteIngr.executeUpdate();
+        fermerConnexion();
     }
 
     public void ajouterRecette(int idUtilisateur, String titre, String description, String date, String imageUri) throws SQLException {
@@ -233,6 +351,7 @@ public class ConnexionBD {
             Log.e("ConnexionBD", "Erreur lors de l'ajout de la recette : " + e.getMessage());
             e.printStackTrace();
         }
+        fermerConnexion();
     }
 
     public Plat getRecetteById(int idP) {
@@ -249,11 +368,13 @@ public class ConnexionBD {
 
                     // Créer et retourner un objet Recette avec les données récupérées
                     Plat plat = new Plat(idP,idUtilisateur,titre,description,res.getDate("Date"),imageRecette);
+                    fermerConnexion();
                     return plat;
                 }
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
+        fermerConnexion();
         return null; // en cas d'erreur ou si aucune recette n'est trouvée
     }
 
@@ -269,7 +390,7 @@ public class ConnexionBD {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        fermerConnexion();
         return latestRecipeId;
     }
 
@@ -288,12 +409,13 @@ public class ConnexionBD {
                         resultSet.getString("Bio"),
                         resultSet.getString("Photo")
                 );
-                pStmGetUtilisateur.close();
+                fermerConnexion();
                 return utilisateur;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        fermerConnexion();
         return null;
     }
 
@@ -314,6 +436,8 @@ public class ConnexionBD {
             e.printStackTrace();
             Log.e("ConnexionBD", "Erreur lors de la mise à jour de l'utilisateur dans la base de données.");
         }
+
+        fermerConnexion();
     }
 
     public List<Plat> getTousRecetteByIdUser(Utilisateur utilisateur, ArrayList<String> dates) {
@@ -347,6 +471,7 @@ public class ConnexionBD {
         }
 
         Log.d("ConnexionBD", "Fin de la méthode getTousRecetteByIdUser");
+        fermerConnexion();
         return recettes;
 
     }

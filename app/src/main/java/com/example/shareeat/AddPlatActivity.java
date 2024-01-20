@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +26,7 @@ import com.example.shareeat.modele.Ingredient;
 import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
@@ -56,6 +59,7 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
     private IngrAdapter ingrAdapter;
     Button btnAddIngredient;
     Button btnValider;
+    private BottomNavigationView bottomNavigationView;
 
     private List<Ingredient> ingredientList = new ArrayList<>();
 
@@ -83,6 +87,8 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
         descriptionP = (EditText) findViewById(R.id.descPlatInput);
         btnAddIngredient = (Button) findViewById(R.id.btnAddNewIngr);
         btnValider = (Button) findViewById(R.id.btnValider);
+        bottomNavigationView = findViewById(R.id.navbar);
+        bottomNavigationView.setSelectedItemId(R.id.nav_add);
 
         // initialisation de la connexion bd
         try {
@@ -90,6 +96,24 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                if (item.getItemId() == R.id.nav_home) {
+                    finish();
+                    return true;
+                } else if (item.getItemId() == R.id.nav_search) {
+                    return true;
+                } else if (item.getItemId() == R.id.nav_add) {
+                    return true;
+                }
+
+                return false;
+            }
+        });
 
 
         //**************Partie liste des ingrédients ************************************
