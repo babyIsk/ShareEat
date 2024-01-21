@@ -88,7 +88,7 @@ public class ConnexionBD {
     }
 
     public void fermerConnexion() {
-        try {
+        /*try {
             // Close all prepared statements
             if (pStmInscritpion != null) pStmInscritpion.close();
             if (pStmEnvoieMessage != null) pStmEnvoieMessage.close();
@@ -109,15 +109,16 @@ public class ConnexionBD {
             if (pStmDerniereConversation != null) pStmDerniereConversation.close();
             if (pStmDernierMessage != null) pStmDernierMessage.close();
 
-            // Close the database connection
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
-                System.out.println("Connexion fermée avec succès.");
-            }
+            // Do not close the database connection here
+            // if (conn != null && !conn.isClosed()) {
+            //     conn.close();
+            //     System.out.println("Connexion fermée avec succès.");
+            // }
         } catch (SQLException e) {
             System.err.println("Erreur lors de la fermeture de la connexion : " + e.getMessage());
-        }
+        }*/
     }
+
 
     public Utilisateur inscription(String pseudo, String nom, String prenom, String email, String mdp) {
         try {
@@ -344,7 +345,7 @@ public class ConnexionBD {
             Log.e("ConnexionBD", "Erreur lors de l'ajout de la recette : " + e.getMessage());
             e.printStackTrace();
         }
-        fermerConnexion();
+
     }
 
     public Plat getRecetteById(int idP) {
