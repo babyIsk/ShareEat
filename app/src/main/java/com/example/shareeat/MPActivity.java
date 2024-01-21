@@ -11,11 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.shareeat.adapter.MPAdaptater;
 import com.example.shareeat.adapter.MessageAdapter;
+import com.example.shareeat.adapter.RecetteAdapter;
 import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.Message;
 import com.example.shareeat.modele.UserDataSingleton;
@@ -30,15 +32,12 @@ import java.util.concurrent.Executors;
 
 public class MPActivity extends AppCompatActivity {
 
-
-
-    private ExecutorService executorService;
-    private Handler handler;
     private BottomNavigationView bottomNavigationView;
     private Utilisateur user;
     private ListView listView;
     private ConnexionBD connexionBD;
     private List<Utilisateur> userList;
+    private ImageButton profil;
     private MPAdaptater mpAdaptater;
 
     @Override
@@ -51,25 +50,17 @@ public class MPActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.navbar);
         bottomNavigationView.setSelectedItemId(R.id.nav_message);
         listView = findViewById(R.id.mps);
+        profil = findViewById(R.id.toolbar_button);
 
-        userList = new ArrayList<>();
-        mpAdaptater = new MPAdaptater(this, userList, user);
-
-        listView.setAdapter(mpAdaptater);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        profil.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Get the selected user from the list
-                Utilisateur selectedUser = userList.get(position);
-
-                // Open the MessageActivity for the selected user
-                Intent intent = new Intent(MPActivity.this, MessageActivity.class);
-                intent.putExtra("utilisateurId", selectedUser.getIdUtilisateur());
+            public void onClick(View v) {
+                Intent intent = new Intent(MPActivity.this, ProfilGaleryActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
+
+
 
 
         ViewTreeObserver viewTreeObserver = listView.getViewTreeObserver();
@@ -84,16 +75,38 @@ public class MPActivity extends AppCompatActivity {
             }
         });
 
-        executorService = Executors.newSingleThreadExecutor();
-        handler = new Handler(Looper.getMainLooper());
 
-        rechercheMessage();
+        try {
+            ConnexionBD bd = new ConnexionBD();
+            List<Utilisateur> contacts = bd.getMP(user.getIdUtilisateur());
+            if(contacts != null){
+                mpAdaptater = new MPAdaptater(this, contacts, user);
+                listView.setAdapter(mpAdaptater);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        // Get the selected user from the list
+                        Utilisateur selectedUser = contacts.get(position);
+
+                        // Open the MessageActivity for the selected user
+                        Intent intent = new Intent(MPActivity.this, MessageActivity.class);
+                        intent.putExtra("utilisateurId", selectedUser.getIdUtilisateur());
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
                 if (item.getItemId() == R.id.nav_home) {
                     finish();
                     return true;
@@ -107,36 +120,6 @@ public class MPActivity extends AppCompatActivity {
                     return true;
                 }
                 return false;
-            }
-        });
-    }
-
-
-
-
-    public void rechercheMessage() {
-        executorService.execute(() -> {
-            try {
-                ConnexionBD bd = new ConnexionBD();
-                while (true) {
-                    List<Utilisateur> contacts = bd.getMP(user.getIdUtilisateur());
-                    // Mettre à jour l'interface utilisateur sur le thread principal
-                    handler.post(() -> {
-                        // Ajouter les nouveaux messages à la liste
-                        userList.clear();
-                        userList.addAll(contacts);
-                        // Rafraîchir l'adaptateur
-                        mpAdaptater.notifyDataSetChanged();
-                        // Faire défiler la ListView vers le bas
-                    });
-
-                    Thread.sleep(650);
-                }
-            } catch (SQLException | ClassNotFoundException | InterruptedException e) {
-                handler.post(() -> {
-                    Toast.makeText(MPActivity.this, "Erreur de connexion, impossible de récupérer les messages", Toast.LENGTH_SHORT).show();
-                });
-                e.printStackTrace();
             }
         });
     }

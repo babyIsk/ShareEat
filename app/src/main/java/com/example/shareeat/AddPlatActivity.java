@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -59,6 +60,7 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
     private IngrAdapter ingrAdapter;
     Button btnAddIngredient;
     Button btnValider;
+    private ImageButton profil;
     private BottomNavigationView bottomNavigationView;
 
     private List<Ingredient> ingredientList = new ArrayList<>();
@@ -89,6 +91,16 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
         btnValider = (Button) findViewById(R.id.btnValider);
         bottomNavigationView = findViewById(R.id.navbar);
         bottomNavigationView.setSelectedItemId(R.id.nav_add);
+        profil = findViewById(R.id.toolbar_button);
+
+        profil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AddPlatActivity.this, ProfilGaleryActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         // initialisation de la connexion bd
         try {

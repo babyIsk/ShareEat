@@ -78,9 +78,6 @@ public class MPAdaptater extends BaseAdapter {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-
-
         return convertView;
     }
 }

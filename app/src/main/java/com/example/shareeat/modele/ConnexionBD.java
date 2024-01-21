@@ -37,6 +37,8 @@ public class ConnexionBD {
     private PreparedStatement pStmRecetteAccueil;
     private PreparedStatement pStmDerniereConversation;
     private PreparedStatement pStmDernierMessage;
+    private PreparedStatement pStmLike;
+    private PreparedStatement pStmUnLike;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -85,6 +87,8 @@ public class ConnexionBD {
                 "WHERE (IdSender = ? AND IdReceiver = ?) OR (IdSender = ? AND IdReceiver = ?)\n" +
                 "ORDER BY Heure DESC\n" +
                 "LIMIT 1;\n");
+        pStmLike = conn.prepareStatement("Insert Into A_like (IdRecette, IdUtilisateur) values (?,?)");
+        pStmUnLike = conn.prepareStatement("DELETE FROM A_like (IdRecette, IdUtilisateur) values (?,?)");
     }
 
     public void fermerConnexion() {
@@ -483,5 +487,25 @@ public class ConnexionBD {
         fermerConnexion();
         return recettes;
 
+    }
+
+    public void like(int userId, int recetteId){
+        try {
+            pStmLike.setInt(1,userId);
+            pStmLike.setInt(2,recetteId);
+            this.pStmLike.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void Unlike(int userId, int recetteId){
+        try {
+            pStmUnLike.setInt(1,userId);
+            pStmUnLike.setInt(2,recetteId);
+            this.pStmLike.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

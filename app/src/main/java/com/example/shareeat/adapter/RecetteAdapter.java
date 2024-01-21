@@ -36,7 +36,6 @@ public class RecetteAdapter extends BaseAdapter  {
 
         @Override
         public int getCount() {
-
             return plats.size();
         }
 
@@ -60,9 +59,8 @@ public class RecetteAdapter extends BaseAdapter  {
             TextView titre = convertView.findViewById(R.id.titreRecette);
             ImageView image = convertView.findViewById(R.id.imageRecette);
             ImageView photodeProfil = convertView.findViewById(R.id.ppUserRecette);
-
-
             Utilisateur userRecette;
+
             try {
                 ConnexionBD bd = new ConnexionBD();
                 userRecette = bd.getUtilisateurById(plat.getIdUtilisateur());
@@ -74,7 +72,6 @@ public class RecetteAdapter extends BaseAdapter  {
                     // Si l'utilisateur n'a pas de photo, affiche une image par défaut
                     photodeProfil.setImageResource(R.drawable.profil_picture);
                 }
-
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
@@ -83,38 +80,7 @@ public class RecetteAdapter extends BaseAdapter  {
             titre.setText(plat.getTitreP());
             String photoPlatUri = "https://shareeat.alwaysdata.net/photoRecette/"+plat.getImageUrl();
             Picasso.get().load(photoPlatUri).into(image);
-
-
-
             return convertView;
         }
-
-
-
-
-        /*@NonNull
-        @Override
-        public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recette_user, parent, false);
-            return new viewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull viewHolder holder, int position) {
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return 0;
-        }
-
-        public class viewHolder extends RecyclerView.ViewHolder{
-
-            public viewHolder(@NonNull View itemView) {
-                super(itemView);
-            }
-        }*/
-
     }
 

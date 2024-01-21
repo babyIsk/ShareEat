@@ -48,7 +48,7 @@ public class ConnexionActivity extends AppCompatActivity {
                 UserDataSingleton.getInstance().setUtilisateur(utilisateur);
 
                 // Naviguer vers l'activité suivante
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), AccueilActivity.class);
                 startActivity(intent);
                 finish();
 

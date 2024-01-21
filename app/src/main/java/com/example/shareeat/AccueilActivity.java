@@ -3,6 +3,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ public class AccueilActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private Utilisateur user;
     private ListView listView;
+    private ImageButton profil;
     private ConnexionBD connexionBD;
 
     @Override
@@ -43,6 +46,15 @@ public class AccueilActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.navbar);
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
         listView = findViewById(R.id.recettes);
+        profil = findViewById(R.id.toolbar_button);
+
+        profil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AccueilActivity.this, ProfilGaleryActivity.class);
+                startActivity(intent);
+            }
+        });
 
         if (user != null) {
             try {
