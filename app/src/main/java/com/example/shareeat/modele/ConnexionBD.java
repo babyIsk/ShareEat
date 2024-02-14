@@ -39,6 +39,7 @@ public class ConnexionBD {
     private PreparedStatement pStmDernierMessage;
     private PreparedStatement pStmLike;
     private PreparedStatement pStmUnLike;
+    private PreparedStatement pStmLikeExists;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -89,6 +90,7 @@ public class ConnexionBD {
                 "LIMIT 1;\n");
         pStmLike = conn.prepareStatement("Insert Into A_like (IdRecette, IdUtilisateur) values (?,?)");
         pStmUnLike = conn.prepareStatement("DELETE FROM A_like (IdRecette, IdUtilisateur) values (?,?)");
+        pStmLikeExists = conn.prepareStatement("SELECT * FROM A_like WHERE IdUtilisateur = ? AND IdRecette = ?");
     }
 
     public void fermerConnexion() {
@@ -508,4 +510,21 @@ public class ConnexionBD {
             e.printStackTrace();
         }
     }
+
+    public boolean likeExists(int userId, int recetteId) {
+        boolean likeExists = false;
+        try {
+            pStmLike.setInt(1, userId);
+            pStmLike.setInt(2, recetteId);
+            ResultSet resultSet = pStmLikeExists.executeQuery();
+            //true ou false en fonction de si ça renvoie qqc ou pas.
+            likeExists = resultSet.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        fermerConnexion();
+        return likeExists;
+    }
+
+
 }
