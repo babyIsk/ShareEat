@@ -2,15 +2,19 @@ package com.example.shareeat.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shareeat.CommentaireActivity;
@@ -30,11 +34,13 @@ public class RecetteAdapter extends BaseAdapter  {
     private Context context;
     private List<Plat> plats;
     private Utilisateur user;
+    ConnexionBD bd;
 
-    public RecetteAdapter(Context context, List<Plat> plats, Utilisateur user) {
+    public RecetteAdapter(Context context, List<Plat> plats, Utilisateur user) throws SQLException, ClassNotFoundException {
         this.context = context;
         this.plats = plats;
         this.user = user;
+        this.bd = new ConnexionBD();
     }
 
 
@@ -63,13 +69,11 @@ public class RecetteAdapter extends BaseAdapter  {
             TextView titre = convertView.findViewById(R.id.titreRecette);
             ImageView image = convertView.findViewById(R.id.imageRecette);
             ImageView photodeProfil = convertView.findViewById(R.id.ppUserRecette);
-            ImageButton like = convertView.findViewById(R.id.like);
             TextView nbCommentaire = convertView.findViewById(R.id.nbCommentaire);
-            Utilisateur userRecette;
+            ImageButton boutonLike = convertView.findViewById(R.id.boutonlike);
 
             try {
-                ConnexionBD bd = new ConnexionBD();
-                userRecette = bd.getUtilisateurById(plat.getIdUtilisateur());
+                Utilisateur userRecette = bd.getUtilisateurById(plat.getIdUtilisateur());
                 utilisateur.setText(userRecette.getPseudo());
                 String photoProfilUri = userRecette.getPhoto();
                 if (photoProfilUri != null && !photoProfilUri.isEmpty()) {
@@ -107,16 +111,40 @@ public class RecetteAdapter extends BaseAdapter  {
                         context.startActivity(intent);
                     }
                 });
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
             titre.setText(plat.getTitreP());
             String photoPlatUri = "https://shareeat.alwaysdata.net/photoRecette/"+plat.getImageUrl();
             Picasso.get().load(photoPlatUri).into(image);
+
+
+            if (bd.likeExists(user.getIdUtilisateur(),  plat.getIdP())) {
+                boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.rouge_shareeat));
+            }
+
+            boutonLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    int recetteId = plat.getIdP();
+                    int userId = user.getIdUtilisateur();
+
+                    if (!bd.likeExists(userId, recetteId)) {
+                        bd.like(userId, recetteId);
+                        boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.rouge_shareeat));
+
+                    } else {
+                        bd.Unlike(userId, recetteId);
+                        boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.black));
+                    }
+
+                }
+            });
+
             return convertView;
         }
+
     }
 

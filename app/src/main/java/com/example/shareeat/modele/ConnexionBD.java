@@ -48,6 +48,7 @@ public class ConnexionBD {
     private PreparedStatement pStmLike;
     private PreparedStatement pStmUnLike;
     private PreparedStatement pStmCompteCommentaire;
+    private PreparedStatement pStmLikeExists;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -76,7 +77,7 @@ public class ConnexionBD {
         pStmRecetteById = conn.prepareStatement("SELECT * FROM Recette WHERE IdRecette = ?");
         pStmGetLatestRecipeId = conn.prepareStatement("SELECT LAST_INSERT_ID() AS LatestRecipeId");
         pStmGetUtilisateur = conn.prepareStatement("SELECT * FROM Utilisateurs WHERE IdUtilisateur = ?");
-        pStmRecetteAccueil = conn.prepareStatement("SELECT * FROM Recette WHERE IdUtilisateur <> ?");
+        pStmRecetteAccueil = conn.prepareStatement("SELECT * FROM Recette WHERE IdUtilisateur <> ? ORDER BY IdRecette DESC");
         pStmUpdateUser = conn.prepareStatement("UPDATE Utilisateurs SET Prenom = ?, Pseudo = ?, Bio = ?, Photo = ? WHERE IdUtilisateur = ?");
         pStmRecetteByIdAndDate = conn.prepareStatement("SELECT * FROM Recette WHERE IdUtilisateur = ? AND Date = ?");
         pStmDerniereConversation = conn.prepareStatement("SELECT U.*\n" +
@@ -101,6 +102,8 @@ public class ConnexionBD {
         pStmCommentaireParPoste = conn.prepareStatement("SELECT * FROM Commentaires WHERE IdRecette = ? ORDER BY Date DESC");
         pStmSendCommentaire =  conn.prepareStatement("Insert Into Commentaires (IdUtilisateur, IdRecette, Contenu, Date) VALUES (?, ?, ?, NOW())");
         pStmCompteCommentaire = conn.prepareStatement("SELECT COUNT(*) FROM Commentaires WHERE IdRecette = ?");
+        pStmUnLike = conn.prepareStatement("DELETE FROM `A_like` WHERE `A_like`.`IdUtilisateur` = ? AND `A_like`.`IdRecette` = ?");
+        pStmLikeExists = conn.prepareStatement("SELECT * FROM A_like WHERE IdUtilisateur = ? AND IdRecette = ?");
     }
 
     public void fermerConnexion() {
@@ -567,8 +570,8 @@ public class ConnexionBD {
 
     public void like(int userId, int recetteId){
         try {
-            pStmLike.setInt(1,userId);
-            pStmLike.setInt(2,recetteId);
+            pStmLike.setInt(2,userId);
+            pStmLike.setInt(1,recetteId);
             this.pStmLike.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -579,9 +582,28 @@ public class ConnexionBD {
         try {
             pStmUnLike.setInt(1,userId);
             pStmUnLike.setInt(2,recetteId);
-            this.pStmLike.executeUpdate();
+            this.pStmUnLike.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public boolean likeExists(int userId, int recetteId) {
+        boolean likeExists = false;
+
+        try {
+            pStmLikeExists.setInt(1, userId);
+            pStmLikeExists.setInt(2, recetteId);
+
+            ResultSet resultSet = pStmLikeExists.executeQuery();
+            //true ou false en fonction de si ça renvoie qqc ou pas
+            likeExists = resultSet.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        fermerConnexion();
+        return likeExists;
+    }
+
+
 }

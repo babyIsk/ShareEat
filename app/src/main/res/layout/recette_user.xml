@@ -56,7 +56,7 @@
         android:textSize="13sp" />
 
     <ImageButton
-        android:id="@+id/like"
+        android:id="@+id/boutonlike"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginTop="340dp"
@@ -64,5 +64,11 @@
         android:layout_alignParentRight="true"
         app:srcCompat="@drawable/baseline_favourite_24"
         app:tint="@color/black" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="375dp"
+        android:background="#C6C6C6"></androidx.viewpager.widget.ViewPager>
 
 </RelativeLayout>
