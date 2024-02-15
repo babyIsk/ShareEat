@@ -1,6 +1,7 @@
 package com.example.shareeat.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -67,10 +69,8 @@ public class RecetteAdapter extends BaseAdapter  {
             ImageView photodeProfil = convertView.findViewById(R.id.ppUserRecette);
             ImageButton boutonLike = convertView.findViewById(R.id.boutonlike);
 
-            Utilisateur userRecette = null;
-
             try {
-                userRecette = bd.getUtilisateurById(plat.getIdUtilisateur());
+                Utilisateur userRecette = bd.getUtilisateurById(plat.getIdUtilisateur());
                 utilisateur.setText(userRecette.getPseudo());
                 String photoProfilUri = userRecette.getPhoto();
                 if (photoProfilUri != null && !photoProfilUri.isEmpty()) {
@@ -87,20 +87,25 @@ public class RecetteAdapter extends BaseAdapter  {
             String photoPlatUri = "https://shareeat.alwaysdata.net/photoRecette/"+plat.getImageUrl();
             Picasso.get().load(photoPlatUri).into(image);
 
-            Utilisateur finalUserRecette = userRecette;
+
+            if (bd.likeExists(user.getIdUtilisateur(),  plat.getIdP())) {
+                boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.rouge_shareeat));
+            }
+
             boutonLike.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     int recetteId = plat.getIdP();
-                    int userId = finalUserRecette.getIdUtilisateur();
+                    int userId = user.getIdUtilisateur();
 
-                    if (bd.likeExists(userId, recetteId)) {
-                        bd.Unlike(userId, recetteId);
-                        boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.black));
-                    } else {
+                    if (!bd.likeExists(userId, recetteId)) {
                         bd.like(userId, recetteId);
                         boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.rouge_shareeat));
+
+                    } else {
+                        bd.Unlike(userId, recetteId);
+                        boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.black));
                     }
 
                 }

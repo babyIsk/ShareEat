@@ -89,7 +89,7 @@ public class ConnexionBD {
                 "ORDER BY Heure DESC\n" +
                 "LIMIT 1;\n");
         pStmLike = conn.prepareStatement("Insert Into A_like (IdRecette, IdUtilisateur) values (?,?)");
-        pStmUnLike = conn.prepareStatement("DELETE FROM A_like (IdRecette, IdUtilisateur) values (?,?)");
+        pStmUnLike = conn.prepareStatement("DELETE FROM `A_like` WHERE `A_like`.`IdUtilisateur` = ? AND `A_like`.`IdRecette` = ?");
         pStmLikeExists = conn.prepareStatement("SELECT * FROM A_like WHERE IdUtilisateur = ? AND IdRecette = ?");
     }
 
@@ -493,8 +493,8 @@ public class ConnexionBD {
 
     public void like(int userId, int recetteId){
         try {
-            pStmLike.setInt(1,userId);
-            pStmLike.setInt(2,recetteId);
+            pStmLike.setInt(2,userId);
+            pStmLike.setInt(1,recetteId);
             this.pStmLike.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -505,7 +505,7 @@ public class ConnexionBD {
         try {
             pStmUnLike.setInt(1,userId);
             pStmUnLike.setInt(2,recetteId);
-            this.pStmLike.executeUpdate();
+            this.pStmUnLike.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -513,11 +513,13 @@ public class ConnexionBD {
 
     public boolean likeExists(int userId, int recetteId) {
         boolean likeExists = false;
+
         try {
-            pStmLike.setInt(1, userId);
-            pStmLike.setInt(2, recetteId);
+            pStmLikeExists.setInt(1, userId);
+            pStmLikeExists.setInt(2, recetteId);
+
             ResultSet resultSet = pStmLikeExists.executeQuery();
-            //true ou false en fonction de si ça renvoie qqc ou pas.
+            //true ou false en fonction de si ça renvoie qqc ou pas
             likeExists = resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
