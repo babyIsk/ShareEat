@@ -39,19 +39,30 @@
         android:id="@+id/titreRecette"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="340dp"
+        android:text="TextView"
         android:textColor="@color/black"
         android:textSize="20sp"
-        android:textStyle="bold"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/nbCommentaire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="340dp"
-        android:text="TextView" />
+        android:layout_marginBottom="3dp"
+        android:text="2 commentaires"
+        android:textSize="13sp" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/like"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        app:tint="@color/black"
-        app:srcCompat="@drawable/baseline_favourite_24"
         android:layout_marginTop="340dp"
-        android:layout_marginLeft="390dp" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        app:srcCompat="@drawable/baseline_favourite_24"
+        app:tint="@color/black" />
 
 </RelativeLayout>

@@ -1,17 +1,23 @@
 package com.example.shareeat.modele;
 
+import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
 
 public class ConnexionBD {
@@ -37,8 +43,11 @@ public class ConnexionBD {
     private PreparedStatement pStmRecetteAccueil;
     private PreparedStatement pStmDerniereConversation;
     private PreparedStatement pStmDernierMessage;
+    private PreparedStatement pStmCommentaireParPoste;
+    private PreparedStatement pStmSendCommentaire;
     private PreparedStatement pStmLike;
     private PreparedStatement pStmUnLike;
+    private PreparedStatement pStmCompteCommentaire;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -89,6 +98,9 @@ public class ConnexionBD {
                 "LIMIT 1;\n");
         pStmLike = conn.prepareStatement("Insert Into A_like (IdRecette, IdUtilisateur) values (?,?)");
         pStmUnLike = conn.prepareStatement("DELETE FROM A_like (IdRecette, IdUtilisateur) values (?,?)");
+        pStmCommentaireParPoste = conn.prepareStatement("SELECT * FROM Commentaires WHERE IdRecette = ? ORDER BY Date DESC");
+        pStmSendCommentaire =  conn.prepareStatement("Insert Into Commentaires (IdUtilisateur, IdRecette, Contenu, Date) VALUES (?, ?, ?, NOW())");
+        pStmCompteCommentaire = conn.prepareStatement("SELECT COUNT(*) FROM Commentaires WHERE IdRecette = ?");
     }
 
     public void fermerConnexion() {
@@ -278,6 +290,47 @@ public class ConnexionBD {
     }
 
 
+    public List<Commentaire> getCommenaire(int recetteId){
+        List<Commentaire> commentaires = new ArrayList<>();
+        try {
+            pStmCommentaireParPoste.setInt(1, recetteId);
+            ResultSet resultSet = pStmCommentaireParPoste.executeQuery();
+            while (resultSet.next()) {
+                Commentaire commentaire = new Commentaire(
+                        resultSet.getInt("IdCommentaire"),
+                        resultSet.getInt("IdUtilisateur"),
+                        resultSet.getInt("IdRecette"),
+                        resultSet.getString("Contenu"),
+                        resultSet.getTimestamp("Date")
+                );
+                commentaires.add(commentaire);
+            }
+            return commentaires;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        fermerConnexion();
+        return null;
+    }
+
+
+    public int getNombreCommentaire(int recetteId) {
+        try {
+            pStmCompteCommentaire.setInt(1, recetteId);
+            ResultSet resultSet = pStmCompteCommentaire.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            fermerConnexion();
+        }
+        return 0;
+    }
+
+
+
     public Message sendMessage(int userId, int contactId,String message){
         try {
             pStmEnvoieMessage.setInt(1,userId);
@@ -293,6 +346,29 @@ public class ConnexionBD {
         fermerConnexion();
         return null;
     }
+
+
+    public Commentaire sendCommentaire(int userId, int recetteId, String contenu) {
+        try {
+            pStmSendCommentaire.setInt(1, userId);
+            pStmSendCommentaire.setInt(2, recetteId);
+            pStmSendCommentaire.setString(3, contenu);
+            this.pStmSendCommentaire.executeUpdate();
+
+            // Obtenir la date et l'heure actuelles
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+            // Créer un nouvel objet Commentaire avec la date actuelle
+            Commentaire commentaire = new Commentaire(userId, recetteId, contenu, timestamp);
+
+            return commentaire;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        fermerConnexion();
+        return null;
+    }
+
 
     public List<Ingredient> getTousIngredients() throws SQLException {
         List<Ingredient> listeIngrs = new ArrayList<Ingredient>();
