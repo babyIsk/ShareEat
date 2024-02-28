@@ -9,10 +9,10 @@ import retrofit2.http.Part;
 
 public interface FileUploadService {
     @Multipart
-    @POST("/uploadPP.php") // Le chemin doit être ajusté en fonction de votre structure de serveur Alwaysdata
+    @POST("/uploadPP.php")
     Call<ResponseBody> uploadImage(@Part MultipartBody.Part image);
 
     @Multipart
-    @POST("/uploadRecipeImage.php") // Changer le chemin en fonction de votre serveur
+    @POST("/uploadRecipeImage.php")
     Call<ResponseBody> uploadRecipeImage(@Part MultipartBody.Part image);
 }

@@ -1,16 +1,24 @@
 package com.example.shareeat.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.shareeat.CommentaireActivity;
+import com.example.shareeat.PlatActivity;
 import com.example.shareeat.R;
 import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.Message;
@@ -26,17 +34,18 @@ public class RecetteAdapter extends BaseAdapter  {
     private Context context;
     private List<Plat> plats;
     private Utilisateur user;
+    ConnexionBD bd;
 
-    public RecetteAdapter(Context context, List<Plat> plats, Utilisateur user) {
+    public RecetteAdapter(Context context, List<Plat> plats, Utilisateur user) throws SQLException, ClassNotFoundException {
         this.context = context;
         this.plats = plats;
         this.user = user;
+        this.bd = new ConnexionBD();
     }
 
 
         @Override
         public int getCount() {
-
             return plats.size();
         }
 
@@ -60,12 +69,11 @@ public class RecetteAdapter extends BaseAdapter  {
             TextView titre = convertView.findViewById(R.id.titreRecette);
             ImageView image = convertView.findViewById(R.id.imageRecette);
             ImageView photodeProfil = convertView.findViewById(R.id.ppUserRecette);
+            TextView nbCommentaire = convertView.findViewById(R.id.nbCommentaire);
+            ImageButton boutonLike = convertView.findViewById(R.id.boutonlike);
 
-
-            Utilisateur userRecette;
             try {
-                ConnexionBD bd = new ConnexionBD();
-                userRecette = bd.getUtilisateurById(plat.getIdUtilisateur());
+                Utilisateur userRecette = bd.getUtilisateurById(plat.getIdUtilisateur());
                 utilisateur.setText(userRecette.getPseudo());
                 String photoProfilUri = userRecette.getPhoto();
                 if (photoProfilUri != null && !photoProfilUri.isEmpty()) {
@@ -74,47 +82,69 @@ public class RecetteAdapter extends BaseAdapter  {
                     // Si l'utilisateur n'a pas de photo, affiche une image par défaut
                     photodeProfil.setImageResource(R.drawable.profil_picture);
                 }
+                int nbC = bd.getNombreCommentaire(plat.getIdP());
+                if(nbC == 1){
+                    nbCommentaire.setText(nbC + " Commentaire");
+                }else{
+                    nbCommentaire.setText(nbC + " Commentaires");
+                }
 
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+                image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Lorsque l'utilisateur clique sur nbCommentaire, ouvrez CommentaireActivity
+                        Intent intent = new Intent(context, PlatActivity.class);
+                        // Ajoutez l'ID du plat comme extra à l'intent
+                        intent.putExtra("postId", plat.getIdP());
+                        context.startActivity(intent);
+                    }
+                });
+
+
+                nbCommentaire.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Lorsque l'utilisateur clique sur nbCommentaire, ouvrez CommentaireActivity
+                        Intent intent = new Intent(context, CommentaireActivity.class);
+                        // Ajoutez l'ID du plat comme extra à l'intent
+                        intent.putExtra("recetteId", plat.getIdP());
+                        context.startActivity(intent);
+                    }
+                });
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
             titre.setText(plat.getTitreP());
             String photoPlatUri = "https://shareeat.alwaysdata.net/photoRecette/"+plat.getImageUrl();
             Picasso.get().load(photoPlatUri).into(image);
 
 
+            if (bd.likeExists(user.getIdUtilisateur(),  plat.getIdP())) {
+                boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.rouge_shareeat));
+            }
+
+            boutonLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    int recetteId = plat.getIdP();
+                    int userId = user.getIdUtilisateur();
+
+                    if (!bd.likeExists(userId, recetteId)) {
+                        bd.like(userId, recetteId);
+                        boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.rouge_shareeat));
+
+                    } else {
+                        bd.Unlike(userId, recetteId);
+                        boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.black));
+                    }
+
+                }
+            });
 
             return convertView;
         }
-
-
-
-
-        /*@NonNull
-        @Override
-        public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recette_user, parent, false);
-            return new viewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull viewHolder holder, int position) {
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return 0;
-        }
-
-        public class viewHolder extends RecyclerView.ViewHolder{
-
-            public viewHolder(@NonNull View itemView) {
-                super(itemView);
-            }
-        }*/
 
     }
 

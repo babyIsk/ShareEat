@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +22,7 @@ import com.example.shareeat.modele.FileUploadService;
 import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
@@ -47,8 +51,13 @@ public class AddPlatActivity extends AppCompatActivity {
     FloatingActionButton btnAddPhoto;
     private Uri selectedImageUri;
     Button btnValider;
+
     Utilisateur utilisateur;
+    private ImageButton profil;
+
     public ConnexionBD connBD;
+    private BottomNavigationView bottomNavigationView;
+
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -69,6 +78,18 @@ public class AddPlatActivity extends AppCompatActivity {
         descriptionP = (EditText) findViewById(R.id.descPlatInput);
         ingredientsP = (EditText) findViewById(R.id.ingredients);
         btnValider = (Button) findViewById(R.id.btnValider);
+        bottomNavigationView = findViewById(R.id.navbar);
+        bottomNavigationView.setSelectedItemId(R.id.nav_add);
+        profil = findViewById(R.id.toolbar_button);
+
+        profil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AddPlatActivity.this, ProfilGaleryActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         // initialisation de la connexion bd
         try {
@@ -79,6 +100,23 @@ public class AddPlatActivity extends AppCompatActivity {
 
         // Récupérer l'objet Utilisateur depuis UserDataSingleton
         utilisateur = UserDataSingleton.getInstance().getUtilisateur();
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                if (item.getItemId() == R.id.nav_home) {
+                    finish();
+                    return true;
+                } else if (item.getItemId() == R.id.nav_search) {
+                    return true;
+                } else if (item.getItemId() == R.id.nav_add) {
+                    return true;
+                }
+
+                return false;
+            }
+        });
 
         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,7 +185,6 @@ public class AddPlatActivity extends AppCompatActivity {
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
 
     private void uploadImageToServer(Uri imageUri) throws IOException {
         try {

@@ -9,14 +9,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.Message;
-import com.example.shareeat.modele.MessageAdapter;
+import com.example.shareeat.adapter.MessageAdapter;
 import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
+import com.squareup.picasso.Picasso;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,7 @@ public class MessageActivity extends AppCompatActivity {
     private List<Message> messageList;
     private MessageAdapter messageAdapter;
     private TextView tvUserName;
+    private ImageView ppUserContactM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +46,20 @@ public class MessageActivity extends AppCompatActivity {
             actionBar.hide();
         }
 
-        // Récupérer l'utilisateur à partir du singleton
         user = UserDataSingleton.getInstance().getUtilisateur();
-        //user = (Utilisateur) getIntent().getSerializableExtra("user");
-        //contact = (Utilisateur) getIntent().getSerializableExtra("contact");
-        if(user.getIdUtilisateur() == 1){
-            contact = new Utilisateur(2,"Florent","Lelion","iprisc","lelifflo@gmail.com","ihatese", null, null);
-        }else{
-            contact = new Utilisateur(1,"Calliclès","Bazolo","calli77","calliclesbazolo@gmail.com","ilovese", null, null);
+        try {
+            contact = new ConnexionBD().getUtilisateurById(getIntent().getIntExtra("utilisateurId", 0));
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
+
+        ppUserContactM = findViewById(R.id.ppUserContact);
+            if (contact.getPhoto() != null && !contact.getPhoto().isEmpty()) {
+                Picasso.get().load("https://shareeat.alwaysdata.net/photoProfil/"+contact.getPhoto()).into(ppUserContactM);
+            } else {
+                // Si l'utilisateur n'a pas de photo, affiche une image par défaut
+                ppUserContactM.setImageResource(R.drawable.profil_picture);
+            }
 
         // Initialise la liste des messages et l'adaptateur
         messageList = new ArrayList<>();

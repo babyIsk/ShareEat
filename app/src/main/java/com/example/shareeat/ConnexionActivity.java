@@ -47,8 +47,14 @@ public class ConnexionActivity extends AppCompatActivity {
                 // Stocker l'utilisateur dans la classe UserData
                 UserDataSingleton.getInstance().setUtilisateur(utilisateur);
 
+
+                /*Intent intent = new Intent(getApplicationContext(), CommentaireActivity.class);
+                intent.putExtra("recetteId", 6);
+                startActivity(intent);
+                finish();*/
+
                 // Naviguer vers l'activité suivante
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), AccueilActivity.class);
                 startActivity(intent);
                 finish();
 
