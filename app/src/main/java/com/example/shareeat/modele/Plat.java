@@ -1,31 +1,24 @@
 package com.example.shareeat.modele;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
 import java.sql.Date;
 
-
 public class Plat {
-
     int idP;
     int idUtilisateur;
-
     String titreP;
     String descriptionP;
-    private List<Ingredient> ingredientsDuPlat;
     String imgRecette;
+    String ingredients;
     private Date date;
 
-    public Plat(int idP, int idUtilisateur, String titreP, String descriptionP, Date date, String imgRecette) {
+    public Plat(int idP, int idUtilisateur, String titreP, String descriptionP, Date date, String imgRecette, String ingredients) {
         this.idP = idP;
         this.idUtilisateur = idUtilisateur;
         this.titreP = titreP;
         this.descriptionP = descriptionP;
         this.date = date;
         this.imgRecette = imgRecette;
-        this.ingredientsDuPlat = new ArrayList<>();
+        this.ingredients = ingredients;
     }
 
     public int getIdUtilisateur() { return idUtilisateur; }
@@ -54,12 +47,12 @@ public class Plat {
         this.descriptionP = descriptionP;
     }
 
-    public List<Ingredient> getIngrédients() {
-        return ingredientsDuPlat;
+    public String getIngrédients() {
+        return ingredients;
     }
 
-    public void setIngrédients(List<Ingredient> ingrédients) {
-        this.ingredientsDuPlat = ingrédients;
+    public String setIngrédients(String ingredients) {
+        return this.ingredients = ingredients;
     }
 
     public void setIdUtilisateur(int idUtilisateur) {

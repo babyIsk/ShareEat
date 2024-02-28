@@ -1,6 +1,5 @@
 package com.example.shareeat;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,14 +12,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.example.shareeat.adapter.IngrAdapter;
 import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.FileUploadService;
-import com.example.shareeat.modele.Ingredient;
 import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
 import com.github.dhaval2404.imagepicker.ImagePicker;
@@ -31,9 +26,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -45,24 +38,17 @@ import retrofit2.Retrofit;
 
 
 
-public class AddPlatActivity extends AppCompatActivity implements DialogCloseListener{
+public class AddPlatActivity extends AppCompatActivity {
     ImageView imgP;
     EditText dateAjout;
     EditText titreP;
     EditText descriptionP;
+    EditText ingredientsP;
     FloatingActionButton btnAddPhoto;
     private Uri selectedImageUri;
-    private RecyclerView ingrRecyclerView;
-    private IngrAdapter ingrAdapter;
-    Button btnAddIngredient;
     Button btnValider;
-
-    private List<Ingredient> ingredientList = new ArrayList<>();
-
-    public ConnexionBD connBD = new ConnexionBD();
-
-    public AddPlatActivity() throws SQLException, ClassNotFoundException {
-    }
+    Utilisateur utilisateur;
+    public ConnexionBD connBD;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -81,35 +67,18 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
         btnAddPhoto = (FloatingActionButton) findViewById(R.id.btnAddPhoto);
         titreP = (EditText) findViewById(R.id.titrePlatInput);
         descriptionP = (EditText) findViewById(R.id.descPlatInput);
-        btnAddIngredient = (Button) findViewById(R.id.btnAddNewIngr);
+        ingredientsP = (EditText) findViewById(R.id.ingredients);
         btnValider = (Button) findViewById(R.id.btnValider);
 
         // initialisation de la connexion bd
         try {
-            ingredientList = connBD.getTousIngredients();
-        } catch (SQLException e) {
+            connBD = new ConnexionBD();
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 
-        //**************Partie liste des ingrédients ************************************
-        ingrRecyclerView = (RecyclerView) findViewById(R.id.listIngrRecyclerView);
-
-        // LayoutManager est responsable de la mesure et du positionnement
-        // des éléments de la RecyclerView.
-        // Nous devons attacher un layoutManager avant de pouvoir utiliser la RecyclerView.
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        ingrRecyclerView.setLayoutManager(layoutManager);
-
-        ingrAdapter = new IngrAdapter(connBD, this, getSupportFragmentManager(), ingredientList);
-        ingrRecyclerView.setAdapter(ingrAdapter);
-
-        btnAddIngredient.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AddNewIngredient.newInstance().show(getSupportFragmentManager(), AddNewIngredient.TAG);
-            }
-        });
-        //************** FIN (liste des ingrédients) ************************************
+        // Récupérer l'objet Utilisateur depuis UserDataSingleton
+        utilisateur = UserDataSingleton.getInstance().getUtilisateur();
 
         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,6 +98,7 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
                 // Récupérer les données du formulaire
                 String titre = titreP.getText().toString();
                 String description = descriptionP.getText().toString();
+                String ingredients = ingredientsP.getText().toString();
 
                 String dateStr = dateAjout.getText().toString();
                 Date date = null;
@@ -143,9 +113,6 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
                 // évitant ainsi la NullPointerException
                 String imageUri = (selectedImageUri != null) ? selectedImageUri.getLastPathSegment() : "";
 
-                // Récupérer l'objet Utilisateur depuis UserDataSingleton
-                Utilisateur utilisateur = UserDataSingleton.getInstance().getUtilisateur();
-
                 // Gestion des erreurs
                 if (selectedImageUri == null) {
                     showToast("Veuillez sélectionner une image pour votre recette.");
@@ -153,13 +120,13 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
                 } else if (titre.isEmpty()) {
                     showToast("Veuillez entrer un titre pour votre recette.");
                     return;
-                } else if (utilisateur != null) {
+                }else if (utilisateur != null) {
                     // Enregistrement les données dans la table Recette
                     try {
                         uploadImageToServer(selectedImageUri);
                         // Convertir java.util.Date en java.sql.Date
                         java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-                        connBD.ajouterRecette(utilisateur.getIdUtilisateur(), titre, description, sqlDate, imageUri);
+                        connBD.ajouterRecette(utilisateur.getIdUtilisateur(), titre, description, sqlDate, imageUri, ingredients);
                     } catch (SQLException | IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -247,19 +214,6 @@ public class AddPlatActivity extends AppCompatActivity implements DialogCloseLis
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String dateStr = dateFormat.format(dateDuJour);
         dateAjout.setText(dateStr);
-    }
-
-
-    //S'occupe de la liste des ingrédients une fois le fragment d'ajout de nouvel ingrédient en bas de la page est fermé
-    @Override
-    public void handleDialogClose(DialogInterface dialog) {
-        try {
-            ingredientList = connBD.getTousIngredients();
-            ingrAdapter.setIngredients(ingredientList);
-            ingrAdapter.notifyDataSetChanged(); //update le recyclerView
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
 }

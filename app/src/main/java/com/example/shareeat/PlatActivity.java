@@ -2,16 +2,10 @@ package com.example.shareeat;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shareeat.modele.ConnexionBD;
 import com.example.shareeat.modele.Plat;
@@ -27,10 +21,8 @@ public class PlatActivity extends Activity {
     EditText dateAjout;
     TextView txtTitreP;
     TextView txtDescriptionP;
+    TextView txtIngredientsLabel;
     TextView txtIngredients;
-    RecyclerView listIngredients;
-    private ProgressBar loading;
-
     private ConnexionBD connBD;
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -44,9 +36,8 @@ public class PlatActivity extends Activity {
         txtDescriptionP = (TextView) findViewById(R.id.descriptionPlat);
         imgP = (ImageView) findViewById(R.id.imgPlat);
         dateAjout = (EditText) findViewById(R.id.dateAjoutPlat);
-        txtIngredients = (TextView) findViewById(R.id.ingredientsLabel);
-        listIngredients = (RecyclerView) findViewById(R.id.ingredientsList);
-        loading = findViewById(R.id.loading);
+        txtIngredientsLabel = (TextView) findViewById(R.id.ingredientsLabel);
+        txtIngredients = (TextView) findViewById(R.id.ingredientsList);
 
         try {
             connBD = new ConnexionBD();
@@ -66,9 +57,6 @@ public class PlatActivity extends Activity {
         //pour tester décommenter :
         //idPlat = 77;
         if (idPlat != -1) {
-            // Affiche le cercle de loading
-            loading.setVisibility(View.VISIBLE);
-
             Plat plat = connBD.getRecetteById(idPlat);
             updateUI(plat);
         }
@@ -78,6 +66,7 @@ public class PlatActivity extends Activity {
         if (plat != null) {
             txtTitreP.setText(plat.getTitreP());
             txtDescriptionP.setText(plat.getDescriptionP());
+            txtIngredients.setText(plat.getIngrédients());
             // Formatage de la date
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -92,11 +81,7 @@ public class PlatActivity extends Activity {
 
             Picasso.get().load("https://shareeat.alwaysdata.net/photoRecette/"+plat.getImageUrl()).into(imgP);
 
-            // Cache le cercle de loading
-            loading.setVisibility(View.GONE);
-        } else {
-            // cas : aucun plat n'est trouvé
-            loading.setVisibility(View.GONE);
+
         }
     }
 }

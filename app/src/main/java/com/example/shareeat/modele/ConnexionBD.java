@@ -23,11 +23,6 @@ public class ConnexionBD {
     private PreparedStatement pStmConnexion;
     private PreparedStatement pStmMessage;
     private PreparedStatement pStmEnvoieMessage;
-    private PreparedStatement pStmTousIngredients;
-    private PreparedStatement pStmAjoutIngr;
-    private PreparedStatement pStmUpdateStatus;
-    private PreparedStatement pStmUpdateIngr;
-    private PreparedStatement pStmDeleteIngr;
     private PreparedStatement pStmAddPlat;
     private PreparedStatement pStmRecetteById;
     private PreparedStatement pStmGetLatestRecipeId;
@@ -54,11 +49,6 @@ public class ConnexionBD {
         pStmEnvoieMessage = conn.prepareStatement("INSERT INTO Messagerie (IdSender,IdReceiver,Message,Heure) VALUES (?,?,?,NOW()) ");
         pStmConnexion = conn.prepareStatement("SELECT * FROM Utilisateurs WHERE Mail = ? AND Mdp = PASSWORD(?)");
         pStmMessage = conn.prepareStatement("SELECT * FROM Messagerie WHERE (IdSender = ? AND IdReceiver = ?) OR (IdSender = ? AND IdReceiver = ?) ORDER BY IdMessage ASC");
-        pStmTousIngredients = conn.prepareStatement("SELECT * FROM Ingredients");
-        pStmAjoutIngr = conn.prepareStatement("INSERT INTO Ingredients (statusCheck, nom) VALUES (0, ?)");
-        pStmUpdateStatus = conn.prepareStatement("UPDATE Ingredients SET statusCheck = ? WHERE idIngredient = ?");
-        pStmUpdateIngr = conn.prepareStatement("UPDATE Ingredients SET nom = ? WHERE idIngredient = ?");
-        pStmDeleteIngr = conn.prepareStatement("DELETE FROM Ingredients WHERE idIngredient = ?");
         pStmAddPlat = conn.prepareStatement("INSERT INTO Recette (IdUtilisateur, Titre, Description, Date, ImageRecette) VALUES (?, ?, ?, ?, ?)");
         pStmRecetteById = conn.prepareStatement("SELECT * FROM Recette WHERE IdRecette = ?");
         pStmGetLatestRecipeId = conn.prepareStatement("SELECT LAST_INSERT_ID() AS LatestRecipeId");
@@ -143,7 +133,8 @@ public class ConnexionBD {
                         resultSet.getString("Titre"),
                         resultSet.getString("Description"),
                         resultSet.getDate("Date"),
-                        resultSet.getString("ImageRecette"));
+                        resultSet.getString("ImageRecette"),
+                        resultSet.getString("Ingredient"));
                 plats.add(plat);
 
                 if (plats.isEmpty()) {
@@ -176,42 +167,7 @@ public class ConnexionBD {
         return null;
     }
 
-    public List<Ingredient> getTousIngredients() throws SQLException {
-        List<Ingredient> listeIngrs = new ArrayList<Ingredient>();
-        ResultSet res = this.pStmTousIngredients.executeQuery();
-        while (res.next()) {
-            int id = res.getInt("idIngredient");
-            int status = res.getInt("statusCheck");
-            String nom = res.getString("nom");
-            listeIngrs.add(new Ingredient(id, status, nom));
-        }
-        return listeIngrs;
-    }
-
-    public void ajouterIngr(String nom) throws SQLException  {
-        this.pStmAjoutIngr.setString(1, nom);
-        this.pStmAjoutIngr.executeUpdate();
-    }
-
-    public void updateStatusIngr(int status, int idIngredient) throws SQLException {
-        System.out.println("Updating status for ingredient " + idIngredient + " to " + status);
-        this.pStmUpdateStatus.setInt(1, status);
-        this.pStmUpdateStatus.setInt(2, idIngredient);
-        this.pStmUpdateStatus.executeUpdate();
-    }
-
-    public void updateIngredient(int idIngredient, String nom) throws SQLException {
-        this.pStmUpdateIngr.setString(1, nom);
-        this.pStmUpdateIngr.setInt(2, idIngredient);
-        this.pStmUpdateIngr.executeUpdate();
-    }
-
-    public void deleteIngredient(int idIngredient) throws SQLException {
-        this.pStmDeleteIngr.setInt(1, idIngredient);
-        this.pStmDeleteIngr.executeUpdate();
-    }
-
-    public void ajouterRecette(int idUtilisateur, String titre, String description, Date date, String imageUri) throws SQLException {
+    public void ajouterRecette(int idUtilisateur, String titre, String description, Date date, String imageUri, String ingredients) throws SQLException {
         try {
             Log.d("ConnexionBD", "Ajout de recette - ID utilisateur : " + idUtilisateur);
             pStmAddPlat.setInt(1, idUtilisateur);
@@ -220,6 +176,8 @@ public class ConnexionBD {
 
             pStmAddPlat.setDate(4, new java.sql.Date(date.getTime())); // Utilise java.sql.Date pour la compatibilité avec JDBC
             pStmAddPlat.setString(5, imageUri);
+            pStmAddPlat.setString(6, ingredients);
+
             pStmAddPlat.executeUpdate();
             Log.d("ConnexionBD", "Recette ajoutée avec succès !");
         } catch (SQLException e) {
@@ -240,15 +198,17 @@ public class ConnexionBD {
                     String description = res.getString("Description");
                     Date date = res.getDate("Date");
                     String imageRecette = res.getString("ImageRecette");
+                    String ingredients = res.getString("Ingredient");
 
                     // Créer et retourner un objet Recette avec les données récupérées
-                    Plat plat = new Plat(idP, idUtilisateur, titre, description, date, imageRecette);
+                    Plat plat = new Plat(idP, idUtilisateur, titre, description, date, imageRecette, ingredients);
                     plat.setIdP(idP);
                     plat.setIdUtilisateur(idUtilisateur);
                     plat.setTitreP(titre);
                     plat.setDescriptionP(description);
                     plat.setDate(date);
                     plat.setImgRecette(imageRecette);
+                    plat.setIngrédients(ingredients);
 
                     return plat;
                 }
@@ -318,7 +278,6 @@ public class ConnexionBD {
     }
     public List<Plat> getTousRecetteByIdUser(Utilisateur utilisateur, ArrayList<String> dates) {
         List<Plat> recettes = new ArrayList<>();
-        Log.d("ConnexionBD", "Début de la méthode getTousRecetteByIdUser");
         try {
             for (String formattedDate : dates) {
                 Log.d("ConnexionBD", "Formatted Date : " + formattedDate);
@@ -333,28 +292,24 @@ public class ConnexionBD {
                     String description = res.getString("Description");
                     Date dateRecette = res.getDate("Date");
                     String imageRecette = res.getString("ImageRecette");
+                    String ingredients = res.getString("Ingredient");
 
-
-                    Plat plat = new Plat(idRecette, utilisateur.getIdUtilisateur(), titre, description, dateRecette, imageRecette);
+                    Plat plat = new Plat(idRecette, utilisateur.getIdUtilisateur(), titre, description, dateRecette, imageRecette, ingredients);
                     plat.setIdP(idRecette);
                     plat.setIdUtilisateur(utilisateur.getIdUtilisateur());
                     plat.setTitreP(titre);
                     plat.setDescriptionP(description);
                     plat.setDate(dateRecette);
                     plat.setImgRecette(imageRecette);
+                    plat.setIngrédients(ingredients);
 
                     recettes.add(plat);
                 }
             }
-
-            Log.d("ConnexionBD", "Liste des recettes utilisateur : " + recettes);
         } catch (SQLException e) {
             Log.e("ConnexionBD", "Erreur SQL : " + e.getMessage());
             e.printStackTrace();
         }
-
-        Log.d("ConnexionBD", "Fin de la méthode getTousRecetteByIdUser");
         return recettes;
-
     }
 }

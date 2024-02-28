@@ -77,6 +77,7 @@
                 android:layout_height="300dp"
                 android:background="@color/rouge_shareeat_transparent"
                 android:padding="3dp"
+                android:layout_marginTop="40dp"
                 android:src="@drawable/icone_img"
                 app:layout_constraintBottom_toTopOf="@+id/dateFormAjoutPlat"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -124,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:text="Ingrédients : "
+                android:text="Ingrédients principaux : "
                 android:textColor="@color/rouge_shareeat"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -135,13 +136,21 @@
                 app:layout_constraintTop_toBottomOf="@+id/divider"
                 app:layout_constraintVertical_bias="0.04" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/listIngrRecyclerView"
-                android:layout_width="404dp"
-                android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            <EditText
+                android:id="@+id/ingredients"
+                android:layout_width="338dp"
+                android:layout_height="100dp"
+                android:layout_marginVertical="10dp"
                 android:layout_marginTop="5dp"
-                android:nestedScrollingEnabled="true"
+                android:background="@drawable/edittextborder"
+                android:ems="10"
+                android:gravity="start|top"
+                android:hint="Ingrédients de la recette..."
+                app:layout_constraintHorizontal_bias="0.558"
+                android:inputType="textMultiLine"
+                android:padding="10dp"
+                app:layout_constraintVertical_bias="0.048"
+                app:layout_constraintBottom_toTopOf="@+id/btnValider"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ingredientsLabel" />
@@ -179,36 +188,19 @@
                 app:srcCompat="@drawable/add_photo" />
 
             <Button
-                android:id="@+id/btnAddNewIngr"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="32dp"
-                android:text="+"
-                android:textSize="22sp"
-                android:textColor="@color/rouge_shareeat"
-                android:background="@drawable/add_btn_border_gray"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/listIngrRecyclerView"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <Button
                 android:id="@+id/btnValider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="32dp"
-                android:text="Valider"
-                android:textSize="20sp"
-                android:textColor="@color/black"
+                android:layout_marginBottom="472dp"
                 android:background="@drawable/boutton"
+                android:text="Valider"
+                android:textColor="@color/black"
+                android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnAddNewIngr"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/ingredientsLabel" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

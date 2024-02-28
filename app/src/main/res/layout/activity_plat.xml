@@ -29,17 +29,24 @@
         app:strokeColor="@color/rouge_shareeat"
         app:strokeWidth="2dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <TextView
         android:id="@+id/ingredientsList"
-        android:layout_width="match_parent"
+        android:layout_width="349dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="165dp"
+        android:background="@drawable/add_btn_border_gray"
+        android:maxLines="5"
+        android:padding="10dp"
+        android:text="Ingredients de la recette"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.062"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ingredientsLabel"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.048" />
 
     <TextView
         android:id="@+id/titrePlat"
@@ -103,7 +110,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
-        android:text="Ingredients"
+        android:text="Ingredients principaux"
         android:textColor="@color/rouge_shareeat"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -113,20 +120,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/descriptionPlat"
         app:layout_constraintVertical_bias="0.0" />
-
-    <ProgressBar
-        android:id="@+id/loading"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/ingredientsList"
-        app:layout_constraintEnd_toEndOf="@+id/ingredientsList"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="@+id/ingredientsList"
-        app:layout_constraintTop_toTopOf="@+id/ingredientsList"
-        app:layout_constraintVertical_bias="0.527"
-        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
