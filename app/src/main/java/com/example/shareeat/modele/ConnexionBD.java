@@ -44,6 +44,7 @@ public class ConnexionBD {
     private PreparedStatement pStmUnLike;
     private PreparedStatement pStmCompteCommentaire;
     private PreparedStatement pStmLikeExists;
+    private PreparedStatement pStmGetLike;
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
@@ -94,6 +95,7 @@ public class ConnexionBD {
         pStmCompteCommentaire = conn.prepareStatement("SELECT COUNT(*) FROM Commentaires WHERE IdRecette = ?");
         pStmUnLike = conn.prepareStatement("DELETE FROM `A_like` WHERE `A_like`.`IdUtilisateur` = ? AND `A_like`.`IdRecette` = ?");
         pStmLikeExists = conn.prepareStatement("SELECT * FROM A_like WHERE IdUtilisateur = ? AND IdRecette = ?");
+        pStmGetLike = conn.prepareStatement("SELECT R.* FROM Recette R INNER JOIN A_like L ON R.IdRecette = L.IdRecette WHERE L.IdUtilisateur = ?");
     }
 
     public void fermerConnexion() {
@@ -553,6 +555,31 @@ public class ConnexionBD {
         }
         fermerConnexion();
         return likeExists;
+    }
+
+    public List<Plat> getPlatLike(int userId) {
+        List<Plat> plats = new ArrayList<>();
+        try {
+            pStmGetLike.setInt(1, userId);
+            ResultSet resultSet = pStmGetLike.executeQuery();
+            while (resultSet.next()) {
+                Plat plat = new Plat(
+                        resultSet.getInt("IdRecette"),
+                        resultSet.getInt("IdUtilisateur"),
+                        resultSet.getString("Titre"),
+                        resultSet.getString("Description"),
+                        resultSet.getDate("Date"),
+                        resultSet.getString("ImageRecette"),
+                        resultSet.getString("Ingredient")
+                );
+                plats.add(plat);
+            }
+            resultSet.close();
+            pStmGetLike.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return plats;
     }
 
 

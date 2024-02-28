@@ -1,54 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="400dp">
-
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        app:cardCornerRadius="50dp">
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            tools:srcCompat="@tools:sample/avatars" />
-    </androidx.cardview.widget.CardView>
-
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="412dp"
-        android:layout_height="282dp"
-        android:layout_marginTop="50dp"
+        android:id="@+id/image"
+        android:layout_width="141dp"
+        android:layout_height="141dp"
+        android:layout_alignParentStart="true"
         tools:srcCompat="@tools:sample/avatars"
         android:scaleType="centerCrop"/>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="12dp"
-        android:text="TextView" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:layout_marginTop="340dp" />
-
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/like"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        app:tint="@color/black"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="95dp"
         app:srcCompat="@drawable/baseline_favourite_24"
-        android:layout_marginTop="340dp"
-        android:layout_marginLeft="390dp" />
+        android:layout_below="@id/image"
+        app:tint="@color/black" />
+
+    <TextView
+        android:id="@+id/titre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_below="@id/image"
+        android:text="TextView" />
 
 </RelativeLayout>
