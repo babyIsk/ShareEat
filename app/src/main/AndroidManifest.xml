@@ -48,6 +48,9 @@
             android:name=".AccueilActivity"
             android:exported="true" />
         <activity
+            android:name=".LikeActivity"
+            android:exported="false" />
+        <activity
             android:name=".StartAppActivity"
             android:exported="true">
             <intent-filter>

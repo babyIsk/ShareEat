@@ -4,20 +4,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.shareeat.AddPlatActivity;
-import com.example.shareeat.R;
-import com.example.shareeat.adapter.RecetteAdapter;
+import com.example.shareeat.adapter.RecetteLikeAdapter;
 import com.example.shareeat.modele.ConnexionBD;
-import com.example.shareeat.modele.Message;
 import com.example.shareeat.modele.Plat;
 import com.example.shareeat.modele.UserDataSingleton;
 import com.example.shareeat.modele.Utilisateur;
@@ -26,18 +21,18 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.sql.SQLException;
 import java.util.List;
 
-public class AccueilActivity extends AppCompatActivity {
+public class LikeActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private Utilisateur user;
-    private ListView listView;
+    private GridView gridView;
     private ImageButton profil;
     private ConnexionBD connexionBD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_accueil);
+        setContentView(R.layout.activity_likes);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -46,13 +41,13 @@ public class AccueilActivity extends AppCompatActivity {
         user = UserDataSingleton.getInstance().getUtilisateur();
         bottomNavigationView = findViewById(R.id.navbar);
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
-        listView = findViewById(R.id.recettes);
+        gridView = findViewById(R.id.recettes);
         profil = findViewById(R.id.toolbar_button);
 
         profil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AccueilActivity.this, ProfilGaleryActivity.class);
+                Intent intent = new Intent(LikeActivity.this, ProfilGaleryActivity.class);
                 startActivity(intent);
             }
         });
@@ -61,10 +56,11 @@ public class AccueilActivity extends AppCompatActivity {
             try {
                 connexionBD = new ConnexionBD();
                 if (connexionBD != null) {
-                    List<Plat> plats = connexionBD.getRecetteAccueil(user.getIdUtilisateur());
+                    List<Plat> plats = connexionBD.getPlatLike(user.getIdUtilisateur());
                     if (plats != null) {
-                        RecetteAdapter recetteAdapter = new RecetteAdapter(this, plats, user);
-                        listView.setAdapter(recetteAdapter);
+                        RecetteLikeAdapter recetteLikeAdapter = new RecetteLikeAdapter(this, plats, user);
+                        gridView.setAdapter(recetteLikeAdapter);
+
                     } else {
                         Log.d("PlatDebug", "La liste de plats est null");
                     }
@@ -86,6 +82,7 @@ public class AccueilActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                 if (item.getItemId() == R.id.nav_home) {
+                    startActivity(new Intent(getApplicationContext(), AccueilActivity.class));
                     return true;
                 } else if (item.getItemId() == R.id.nav_search) {
                     return true;

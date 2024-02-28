@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".MainActivity">
+
+    <GridView
+        android:id="@+id/recettes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/navbar"
+        android:layout_below="@+id/toolbar"
+        android:numColumns="3"
+        android:horizontalSpacing="8dp"
+        android:verticalSpacing="8dp"
+        android:padding="8dp"
+        android:gravity="center" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_above="@+id/navbar"
+        android:background="#494949"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@id/toolbar"
+        android:background="#494949"
+        />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navbar"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/gris"
+        app:itemActiveIndicatorStyle="@null"
+        app:itemIconSize="35dp"
+        app:itemIconTint="@color/black"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/navbar" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/gris">
+
+        <ImageView
+            android:id="@+id/toolbar_image"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/logo" />
+
+        <ImageButton
+            android:id="@+id/toolbar_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginRight="10dp"
+            android:background="#00000000"
+            android:src="@drawable/baseline_person_24"
+            app:tint="@color/black" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+</RelativeLayout>
