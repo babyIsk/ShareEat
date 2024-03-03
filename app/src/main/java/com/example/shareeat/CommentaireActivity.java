@@ -39,7 +39,11 @@ public class CommentaireActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_commentaire);
+
+        // Récupération de l'utilisateur connecté
         user = UserDataSingleton.getInstance().getUtilisateur();
+
+        // Initialisation des éléments de la vue
         listView = findViewById(R.id.lvCommentaires);
         titreRecette = findViewById(R.id.titreplatCommenter);
         pseudoUtilisateur = findViewById(R.id.createur);
@@ -48,9 +52,12 @@ public class CommentaireActivity extends AppCompatActivity {
 
         try {
             ConnexionBD bd = new ConnexionBD();
+            // Récupération de l'ID de la recette à partir de l'intent
             recette =  bd.getRecetteById(getIntent().getIntExtra("recetteId", 0));
+            // Affichage du titre de la recette et du pseudo de l'utilisateur qui l'a créée
             titreRecette.setText(recette.getTitreP());
             pseudoUtilisateur.setText(bd.getUtilisateurById(recette.getIdUtilisateur()).getPseudo());
+            // Récupération et affichage des commentaires de la recette
             List<Commentaire> commentaires = bd.getCommenaire(recette.getIdP());
             if(commentaires != null){
                 comAdaptater = new CommentaireAdapter(this, commentaires, user);
@@ -62,6 +69,7 @@ public class CommentaireActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // Gestion du clic sur le bouton d'envoi de commentaire
         btnSendCommentaire.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,6 +92,7 @@ public class CommentaireActivity extends AppCompatActivity {
                     comAdaptater.addCommentaire(envoie); // Ajoutez cette méthode à votre adapter
                     etCommentaire.setText(""); // Efface le champ de commentaire après l'envoi
                 } else {
+                    // Affichage d'un message d'erreur en cas d'échec d'envoi du commentaire
                     Toast.makeText(CommentaireActivity.this, "Échec de l'envoi du commentaire", Toast.LENGTH_SHORT).show();
                 }
             } catch (SQLException e) {
@@ -92,6 +101,7 @@ public class CommentaireActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         } else {
+            // Affichage d'un message si le champ de commentaire est vide
             Toast.makeText(CommentaireActivity.this, "Veuillez saisir un commentaire", Toast.LENGTH_SHORT).show();
         }
     }

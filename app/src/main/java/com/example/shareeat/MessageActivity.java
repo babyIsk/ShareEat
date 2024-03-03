@@ -41,11 +41,14 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+
+        // Masque un élément de la navbar
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
 
+        // Récupérer l'utilisateur actuel et le contact
         user = UserDataSingleton.getInstance().getUtilisateur();
         try {
             contact = new ConnexionBD().getUtilisateurById(getIntent().getIntExtra("utilisateurId", 0));
@@ -53,6 +56,7 @@ public class MessageActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // Charger la photo de profil du contact
         ppUserContactM = findViewById(R.id.ppUserContact);
             if (contact.getPhoto() != null && !contact.getPhoto().isEmpty()) {
                 Picasso.get().load("https://shareeat.alwaysdata.net/photoProfil/"+contact.getPhoto()).into(ppUserContactM);
@@ -67,11 +71,14 @@ public class MessageActivity extends AppCompatActivity {
 
         tvUserName = findViewById(R.id.tvUserName);
 
+        // Afficher le pseudo du contact
         tvUserName.setText(contact.getPseudo());
 
+        // Associer l'adaptateur à la ListView
         ListView listView = findViewById(R.id.lvMessages);
         listView.setAdapter(messageAdapter);
 
+        // Faire défiler la ListView vers le bas lors de l'ajout d'un nouveau message
         ViewTreeObserver viewTreeObserver = listView.getViewTreeObserver();
         viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -84,6 +91,7 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+        // Créer un pool de threads pour exécuter les opérations de récupération des messages
         executorService = Executors.newSingleThreadExecutor();
         handler = new Handler(Looper.getMainLooper());
 
@@ -110,6 +118,7 @@ public class MessageActivity extends AppCompatActivity {
             try {
                 ConnexionBD bd = new ConnexionBD();
                 while (true) {
+                    // Récupérer les nouveaux messages de la base de données
                     List<Message> nouveauxMessages = bd.getMessage(user.getIdUtilisateur(), contact.getIdUtilisateur());
 
                     // Mettre à jour l'interface utilisateur sur le thread principal
@@ -138,6 +147,7 @@ public class MessageActivity extends AppCompatActivity {
 
     public Message envoyerMessage(Utilisateur user, Utilisateur contact, String message) {
         try {
+            // Envoyer le message à la base de données
             Message nouveauMessage = new ConnexionBD().sendMessage(user.getIdUtilisateur(), contact.getIdUtilisateur(), message);
             if (nouveauMessage != null) {
                 // Ajouter le nouveau message à la liste et mettre à jour l'interface utilisateur
@@ -146,11 +156,13 @@ public class MessageActivity extends AppCompatActivity {
                     messageAdapter.notifyDataSetChanged();
                 });
 
+                // Faire défiler la ListView vers le bas pour afficher le nouveau message
                 ListView listView = findViewById(R.id.lvMessages);
                 listView.smoothScrollToPosition(messageList.size() - 1);
                 return nouveauMessage;
             }
         } catch (SQLException | ClassNotFoundException e) {
+            // Afficher un message d'erreur en cas d'échec d'envoi du message
             handler.post(() -> {
                 Toast.makeText(MessageActivity.this, "Erreur de connexion, impossible d'envoyer le message", Toast.LENGTH_SHORT).show();
             });

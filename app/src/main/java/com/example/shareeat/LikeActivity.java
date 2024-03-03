@@ -33,17 +33,20 @@ public class LikeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_likes);
+
+        // Masque un éléments de la navbar
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
-
+        // Initialisation des éléments de la vue
         user = UserDataSingleton.getInstance().getUtilisateur();
         bottomNavigationView = findViewById(R.id.navbar);
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
         gridView = findViewById(R.id.recettes);
         profil = findViewById(R.id.toolbar_button);
 
+        // Gestion du clic sur le bouton de profil
         profil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,6 +55,7 @@ public class LikeActivity extends AppCompatActivity {
             }
         });
 
+        // Récupération des recettes que l'utilisateur a liké
         if (user != null) {
             try {
                 connexionBD = new ConnexionBD();
@@ -76,7 +80,7 @@ public class LikeActivity extends AppCompatActivity {
             // Affichez un message d'erreur ou prenez une action appropriée
         }
 
-
+        // Gestion de la navbar
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

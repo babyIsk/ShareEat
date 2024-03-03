@@ -57,11 +57,13 @@ public class CommentaireAdapter  extends BaseAdapter {
         LayoutInflater inflater = LayoutInflater.from(context);
         convertView = inflater.inflate(R.layout.commentaire, parent, false);
 
+        // Récupération des éléments de la vue
         TextView pseudo = convertView.findViewById(R.id.pseudocommentaire);
         TextView contenu = convertView.findViewById(R.id.commentContenu);
         ImageView photodeProfil = convertView.findViewById(R.id.imagecommentaire);
         TextView commentaireDate = convertView.findViewById(R.id.commentaireDate);
 
+        // Formatage de la date du commentaire
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         String dateFormatee = sdf.format(commentaire.getDate());
         commentaireDate.setText(dateFormatee);
@@ -69,13 +71,16 @@ public class CommentaireAdapter  extends BaseAdapter {
         contenu.setText(commentaire.getContenu());
 
         try {
+            // Récupération de l'utilisateur associé au commentaire depuis la base de données
             ConnexionBD bd = new ConnexionBD();
             Utilisateur utilisateur = bd.getUtilisateurById(commentaire.getIdUtilisateur());
             if (utilisateur != null){
                 pseudo.setText(utilisateur.getPseudo());
+                // Chargement de la photo de profil de l'utilisateur s'il en a une
                 if (utilisateur.getPhoto() != null && !utilisateur.getPhoto().isEmpty()) {
                     Picasso.get().load("https://shareeat.alwaysdata.net/photoProfil/"+utilisateur.getPhoto()).into(photodeProfil);
                 } else {
+                    // Si l'utilisateur n'a pas de photo de profil, afficher une image par défaut
                     photodeProfil.setImageResource(R.drawable.profil_picture);
                 }
             }

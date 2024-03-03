@@ -26,21 +26,26 @@ public class ConnexionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
+
+        // Masque un éléments de la navbar
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
 
+        // Initialisation des éléments de la vue
         inscription = findViewById(R.id.cliquezIciTextView);
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
 
+        // Gestion du clic d'inscription
         inscription.setOnClickListener(view -> {
             Intent main = new Intent(getApplicationContext(), InscriptionActivity.class);
             startActivity(main);
         });
 
+        // Gestion du clic sur le bouton de connexion
         loginButton.setOnClickListener(view -> {
             Utilisateur utilisateur = connexion(emailEditText.getText().toString(), passwordEditText.getText().toString());
             if (utilisateur != null) {

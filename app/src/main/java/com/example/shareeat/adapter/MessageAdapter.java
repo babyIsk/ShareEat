@@ -15,7 +15,6 @@ import com.squareup.picasso.Picasso;
 import java.sql.SQLException;
 import java.util.List;
 
-
 public class MessageAdapter extends BaseAdapter {
     private static final int TYPE_MESSAGE_SENT = 0;
     private static final int TYPE_MESSAGE_RECEIVED = 1;
@@ -61,6 +60,7 @@ public class MessageAdapter extends BaseAdapter {
         Message message = messages.get(position);
         int viewType = getItemViewType(position);
 
+        // Si la vue est réutilisée, convertView n'est pas null, sinon, inflate la vue appropriée
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             if (viewType == TYPE_MESSAGE_SENT) {
@@ -70,6 +70,7 @@ public class MessageAdapter extends BaseAdapter {
             }
         }
 
+        // Récupération des éléments de la vue
         TextView tvMessage = convertView.findViewById(R.id.tvMessage);
         TextView tvDate = convertView.findViewById(R.id.tvDate);
 

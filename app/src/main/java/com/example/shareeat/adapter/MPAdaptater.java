@@ -53,12 +53,14 @@ public class MPAdaptater extends BaseAdapter {
         LayoutInflater inflater = LayoutInflater.from(context);
         convertView = inflater.inflate(R.layout.mp, parent, false);
 
+        // Récupération des éléments de la vue
         TextView pseudo = convertView.findViewById(R.id.PseudoMP);
         TextView text = convertView.findViewById(R.id.textMP);
         TextView heure = convertView.findViewById(R.id.heureMP);
         ImageView photodeProfil = convertView.findViewById(R.id.ppUserMP);
 
         pseudo.setText(utilisateur.getPseudo());
+        // Chargement de la photo de profil de l'utilisateur s'il en a une
         if (utilisateur.getPhoto() != null && !utilisateur.getPhoto().isEmpty()) {
             Picasso.get().load("https://shareeat.alwaysdata.net/photoProfil/"+utilisateur.getPhoto()).into(photodeProfil);
         } else {
@@ -66,6 +68,7 @@ public class MPAdaptater extends BaseAdapter {
             photodeProfil.setImageResource(R.drawable.profil_picture);
         }
 
+        // Récupération et affichage du dernier message entre l'utilisateur actuel et l'utilisateur en cours
         try {
             ConnexionBD bd = new ConnexionBD();
             Message message = bd.getDernierMessage(user.getIdUtilisateur(),utilisateur.getIdUtilisateur());

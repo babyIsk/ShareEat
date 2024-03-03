@@ -45,13 +45,14 @@ public class MPActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mp);
 
-
+        // Initialisation des éléments de la navbar
         user = UserDataSingleton.getInstance().getUtilisateur();
         bottomNavigationView = findViewById(R.id.navbar);
         bottomNavigationView.setSelectedItemId(R.id.nav_message);
         listView = findViewById(R.id.mps);
         profil = findViewById(R.id.toolbar_button);
 
+        // Gérer le clic sur le bouton de profil
         profil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,9 +61,7 @@ public class MPActivity extends AppCompatActivity {
             }
         });
 
-
-
-
+        // Observer les changements dans la liste des messages privés
         ViewTreeObserver viewTreeObserver = listView.getViewTreeObserver();
         viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -78,17 +77,20 @@ public class MPActivity extends AppCompatActivity {
 
         try {
             ConnexionBD bd = new ConnexionBD();
+            // Récupérer la liste des contacts de l'utilisateur actuel
             List<Utilisateur> contacts = bd.getMP(user.getIdUtilisateur());
             if(contacts != null){
+                // Créer l'adaptateur pour afficher la liste des contacts dans la ListView
                 mpAdaptater = new MPAdaptater(this, contacts, user);
                 listView.setAdapter(mpAdaptater);
+                // Gérer le clic sur un contact de la liste
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        // Get the selected user from the list
+                        // Récupérer l'utilisateur sélectionné dans la liste
                         Utilisateur selectedUser = contacts.get(position);
 
-                        // Open the MessageActivity for the selected user
+                        // Ouvrir MessageActivity pour l'utilisateur sélectionné
                         Intent intent = new Intent(MPActivity.this, MessageActivity.class);
                         intent.putExtra("utilisateurId", selectedUser.getIdUtilisateur());
                         startActivity(intent);
@@ -103,7 +105,7 @@ public class MPActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
+        // Gestion de la navbar
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

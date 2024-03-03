@@ -56,19 +56,23 @@ public class RecetteLikeAdapter extends BaseAdapter  {
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView = inflater.inflate(R.layout.recette, parent, false);
 
+            // Récupération des éléments de la vue
             TextView titre = convertView.findViewById(R.id.titre);
             ImageView image = convertView.findViewById(R.id.image);
             ImageButton boutonLike = convertView.findViewById(R.id.like);
 
+            // Affichage du titre de la recette
             titre.setText(plat.getTitreP());
+            // Chargement de l'image de la recette
             String photoPlatUri = "https://shareeat.alwaysdata.net/photoRecette/"+plat.getImageUrl();
             Picasso.get().load(photoPlatUri).into(image);
 
-
+            // Gestion de l'état du bouton like
             if (bd.likeExists(user.getIdUtilisateur(),  plat.getIdP())) {
                 boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.rouge_shareeat));
             }
 
+            // Gestion du clic sur le bouton like
             boutonLike.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

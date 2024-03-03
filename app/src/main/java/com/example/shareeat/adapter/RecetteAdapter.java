@@ -65,6 +65,7 @@ public class RecetteAdapter extends BaseAdapter  {
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView = inflater.inflate(R.layout.recette_user, parent, false);
 
+            // Récupération des éléments de la vue
             TextView utilisateur = convertView.findViewById(R.id.utilisateurRecette);
             TextView titre = convertView.findViewById(R.id.titreRecette);
             ImageView image = convertView.findViewById(R.id.imageRecette);
@@ -73,6 +74,7 @@ public class RecetteAdapter extends BaseAdapter  {
             ImageButton boutonLike = convertView.findViewById(R.id.boutonlike);
 
             try {
+                // Récupération de l'utilisateur associé à la recette
                 Utilisateur userRecette = bd.getUtilisateurById(plat.getIdUtilisateur());
                 utilisateur.setText(userRecette.getPseudo());
                 String photoProfilUri = userRecette.getPhoto();
@@ -82,6 +84,7 @@ public class RecetteAdapter extends BaseAdapter  {
                     // Si l'utilisateur n'a pas de photo, affiche une image par défaut
                     photodeProfil.setImageResource(R.drawable.profil_picture);
                 }
+                // Récupération et affichage du nombre de commentaires associés à la recette
                 int nbC = bd.getNombreCommentaire(plat.getIdP());
                 if(nbC == 1){
                     nbCommentaire.setText(nbC + " Commentaire");
@@ -89,6 +92,7 @@ public class RecetteAdapter extends BaseAdapter  {
                     nbCommentaire.setText(nbC + " Commentaires");
                 }
 
+                // Gestion du clic sur le nombre de commentaires
                 image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -100,7 +104,7 @@ public class RecetteAdapter extends BaseAdapter  {
                     }
                 });
 
-
+                // Gestion du clic sur l'image de la recette
                 nbCommentaire.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -115,15 +119,18 @@ public class RecetteAdapter extends BaseAdapter  {
                 e.printStackTrace();
             }
 
+            // Affichage du titre de la recette
             titre.setText(plat.getTitreP());
+            // Chargement de l'image de la recette
             String photoPlatUri = "https://shareeat.alwaysdata.net/photoRecette/"+plat.getImageUrl();
             Picasso.get().load(photoPlatUri).into(image);
 
-
+            // Gestion de l'état du bouton like
             if (bd.likeExists(user.getIdUtilisateur(),  plat.getIdP())) {
                 boutonLike.setColorFilter(ContextCompat.getColor(context, R.color.rouge_shareeat));
             }
 
+            // Gestion du clic sur le bouton like
             boutonLike.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

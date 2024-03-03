@@ -32,11 +32,14 @@ public class InscriptionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
+
+        // Masque un éléments de la navbar
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
 
+        // Initialisation des éléments de la vue
         viewFlipper = findViewById(R.id.view_flipperInscription);
         prenomEditText = findViewById(R.id.prenomEditText);
         nomEditText = findViewById(R.id.nomEditText);
@@ -47,7 +50,9 @@ public class InscriptionActivity extends AppCompatActivity {
         confirmationMdpEditText = findViewById(R.id.confirmationmdpEditText);
         signUpButton = findViewById(R.id.SignUpButton);
 
+        // Gestion du clic sur le bouton d'inscription
         signUpButton.setOnClickListener(view -> {
+            // Vérification des champs vides
             if (champsVides(prenomEditText, nomEditText, pseudoEditText, emailEditText, confirmationEmailEditText, mdpEditText, confirmationMdpEditText)) {
                 Toast.makeText(InscriptionActivity.this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
             } else if (!confirmation(mdpEditText, confirmationMdpEditText)) {
@@ -59,13 +64,13 @@ public class InscriptionActivity extends AppCompatActivity {
                 // Redirection vers l'accueil
                 Intent intent = new Intent(InscriptionActivity.this, ConnexionActivity.class);
                 startActivity(intent);
-                finish();
+                finish(); // Fermer cette activité pour empêcher le retour en arrière
             }
 
         });
     }
 
-
+    // Méthode pour passer à l'écran précédent
     public void previousView(View v) {
         int currentViewIndex = viewFlipper.getDisplayedChild();
         if (currentViewIndex > 0) {
@@ -73,17 +78,18 @@ public class InscriptionActivity extends AppCompatActivity {
             viewFlipper.setOutAnimation(this, android.R.anim.slide_out_right);
             viewFlipper.showPrevious();
         }else{
-            finish();
+            finish(); // Fermer l'activité si c'est la première vue
         }
     }
 
-
+    // Méthode pour passer à l'écran suivant
     public void nextView(View v) {
         viewFlipper.setInAnimation(this, R.anim.slide_in_right);
         viewFlipper.setOutAnimation(this, R.anim.slide_out_left);
         viewFlipper.showNext();
     }
 
+    // Vérifier si des champs sont vides
     private boolean champsVides(EditText... editTexts) {
         for (EditText editText : editTexts) {
             if (editText.getText().toString().trim().isEmpty()) {

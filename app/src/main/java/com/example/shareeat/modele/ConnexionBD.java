@@ -21,10 +21,14 @@ import java.util.Calendar;
 import java.util.List;
 
 public class ConnexionBD {
+
+    // Déclarations des variables pour la connexion à la base de données
     private static final String URL = "jdbc:mysql://mysql-shareeat.alwaysdata.net:3306/shareeat_bd";
     private static final String USER = "shareeat";
     private static final String PASSWORD = "GUqZtB#X@TG8d4U";
     private Connection conn;
+
+    // Déclarations des objets PreparedStatement pour les requêtes SQL
     private PreparedStatement pStmInscritpion;
     private PreparedStatement pStmConnexion;
     private PreparedStatement pStmMessage;
@@ -48,11 +52,13 @@ public class ConnexionBD {
 
 
     public ConnexionBD() throws SQLException, ClassNotFoundException {
+        // Initialisation de la connexion à la base de données et préparation des requêtes SQL
         this.conn = seConnecterBD();
         this.preparerRequetes();
     }
 
     public Connection seConnecterBD() throws SQLException, ClassNotFoundException {
+        // Établir la connexion à la base de données
         Class.forName("com.mysql.jdbc.Driver");
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -60,6 +66,8 @@ public class ConnexionBD {
     }
 
     private void preparerRequetes() throws SQLException {
+        // Préparer les requêtes SQL
+        // Chaque requête est préparée avec un objet PreparedStatement pour être exécutée plus tard
         pStmInscritpion = conn.prepareStatement("INSERT INTO `Utilisateurs` (`Pseudo`, `Prenom`, `Nom`, `Mail`,`Mdp`) VALUES (?, ?, ?, ?, PASSWORD(?));");
         pStmEnvoieMessage = conn.prepareStatement("INSERT INTO Messagerie (IdSender,IdReceiver,Message,Heure) VALUES (?,?,?,NOW()) ");
         pStmConnexion = conn.prepareStatement("SELECT * FROM Utilisateurs WHERE Mail = ? AND Mdp = PASSWORD(?)");
@@ -132,13 +140,17 @@ public class ConnexionBD {
 
 
     public Utilisateur inscription(String pseudo, String nom, String prenom, String email, String mdp) {
+        // Inscription d'un nouvel utilisateur dans la base de donnée
         try {
+            // Définir les paramètres de la requête avec les valeurs fournies
             this.pStmInscritpion.setString(1, pseudo);
             this.pStmInscritpion.setString(2, prenom);
             this.pStmInscritpion.setString(3, nom);
             this.pStmInscritpion.setString(4, email);
             this.pStmInscritpion.setString(5, mdp);
+            // Executer la requête
             this.pStmInscritpion.executeUpdate();
+            // Créer l'utilisateur avec les paramètres fournis
             Utilisateur inscrit = new Utilisateur(prenom, nom, pseudo, email, mdp);
             fermerConnexion();
             return inscrit;
@@ -151,11 +163,16 @@ public class ConnexionBD {
     }
 
     public Utilisateur connexion(String email, String mdp) {
+        // Authentifier les utilisateur dans la base de donnée
         try {
+            // Définir les paramètres de la requête
             this.pStmConnexion.setString(1, email);
             this.pStmConnexion.setString(2, mdp);
+            // Exécuter la requête
             ResultSet resultSet = this.pStmConnexion.executeQuery();
+            // Vérifier si un utilisateur a été trouvé
             if (resultSet.next()) {
+                // Créer l'utilisateur avec les bons paramètres
                 Utilisateur utilisateur = new Utilisateur(
                         resultSet.getInt("IdUtilisateur"),
                         resultSet.getString("Prenom"),
@@ -181,13 +198,19 @@ public class ConnexionBD {
     }
 
     public List<Message> getMessage(int userId, int contactId){
+        // Récupérer les messages entre un utilisateur et un contact donnés
         List<Message> messages = new ArrayList<>();
         try {
+            // Définir les paramètres de la requête
             pStmMessage.setInt(1, userId);
             pStmMessage.setInt(2, contactId);
             pStmMessage.setInt(3, contactId);
             pStmMessage.setInt(4, userId);
+            // Exécuter la requête
             ResultSet resultSet = pStmMessage.executeQuery();
+
+            // Créer des messages à partir des données récupérées
+            // et les ajouter dans la liste après
             while (resultSet.next()) {
                 Message message = new Message(resultSet.getInt("IdSender"),resultSet.getInt("IdReceiver"),resultSet.getString("Message"),resultSet.getTimestamp("Heure"));
                 messages.add(message);
@@ -205,13 +228,19 @@ public class ConnexionBD {
 
 
     public Message getDernierMessage(int userId, int contactId) {
+        // Récupérer le dernier message
         try {
+            // Définir les paramètres de la requête
             pStmDernierMessage.setInt(1, userId);
             pStmDernierMessage.setInt(2, contactId);
             pStmDernierMessage.setInt(3, contactId);
             pStmDernierMessage.setInt(4, userId);
+            // Executer la requête
             ResultSet resultSet = pStmDernierMessage.executeQuery();
+
+            // Vérifier si un message a été trouvé
             if (resultSet.next()) {
+                // Créer le message avec les bons paramètres
                 Message message = new Message(resultSet.getInt("IdSender"), resultSet.getInt("IdReceiver"),
                         resultSet.getString("Message"), resultSet.getTimestamp("Heure"));
                 fermerConnexion();
@@ -226,6 +255,7 @@ public class ConnexionBD {
 
 
     public List<Plat> getRecetteAccueil(int userId){
+        // Récupérer les plats pour l'acceuil
         List<Plat> plats = new ArrayList<>();
         try {
             pStmRecetteAccueil.setInt(1, userId);  // Utilisation de la déclaration pStmRecetteAccueil spécifique aux recettes
@@ -238,6 +268,7 @@ public class ConnexionBD {
                         resultSet.getDate("Date"),
                         resultSet.getString("ImageRecette"),
                         resultSet.getString("Ingredient"));
+                // Ajouter le plat à la liste des plats
                 plats.add(plat);
 
                 if (plats.isEmpty()) {
@@ -258,12 +289,15 @@ public class ConnexionBD {
     }
 
     public List<Utilisateur> getMP(int userId){
+        // Récupérer les utilisateurs avec lesquels l'utilisateur a eu une conversation
         List<Utilisateur> utilisateurs = new ArrayList<>();
         try {
+            // Préparer la requête puis l'executer
             pStmDerniereConversation.setInt(1, userId);
             pStmDerniereConversation.setInt(2, userId);
             pStmDerniereConversation.setInt(3, userId);
             ResultSet resultSet = pStmDerniereConversation.executeQuery();
+            // Parcourir les résultats et créer des utilisateirs avec les bons paramères
             while (resultSet.next()) {
                 Utilisateur utilisateur = new Utilisateur(
                         resultSet.getInt("IdUtilisateur"),
@@ -287,10 +321,13 @@ public class ConnexionBD {
 
 
     public List<Commentaire> getCommenaire(int recetteId){
+        //Récupérer les commentaires d'une recette spécifique
         List<Commentaire> commentaires = new ArrayList<>();
         try {
+            // Préparer et executer la requête
             pStmCommentaireParPoste.setInt(1, recetteId);
             ResultSet resultSet = pStmCommentaireParPoste.executeQuery();
+            // Parcourir les résultats et ajouter chaque commentaire à la liste
             while (resultSet.next()) {
                 Commentaire commentaire = new Commentaire(
                         resultSet.getInt("IdCommentaire"),
@@ -312,9 +349,12 @@ public class ConnexionBD {
 
     public int getNombreCommentaire(int recetteId) {
         try {
+            // Préparer et executer la requête
             pStmCompteCommentaire.setInt(1, recetteId);
             ResultSet resultSet = pStmCompteCommentaire.executeQuery();
+            // Vérifier s'il y a des résultats
             if (resultSet.next()) {
+                // Récupérer et retourner le nombre de commentaires
                 return resultSet.getInt(1);
             }
         } catch (SQLException e) {
@@ -322,6 +362,7 @@ public class ConnexionBD {
         } finally {
             fermerConnexion();
         }
+        // Retourner 0 si aucun commentaire n'est trouvé ou s'il y a une erreur
         return 0;
     }
 
@@ -329,10 +370,12 @@ public class ConnexionBD {
 
     public Message sendMessage(int userId, int contactId,String message){
         try {
+            // Préaprer et executer la requête qui ajoute un nouveau message
             pStmEnvoieMessage.setInt(1,userId);
             pStmEnvoieMessage.setInt(2,contactId);
             pStmEnvoieMessage.setString(3,message);
             this.pStmEnvoieMessage.executeUpdate();
+            // Créer un nouveau message
             Message m = new Message(userId, contactId,message);
             fermerConnexion();
             return m;
@@ -345,6 +388,7 @@ public class ConnexionBD {
 
     public Commentaire sendCommentaire(int userId, int recetteId, String contenu) {
         try {
+            // Préparer et executer la requête qui ajoute un nouveau commentaire
             pStmSendCommentaire.setInt(1, userId);
             pStmSendCommentaire.setInt(2, recetteId);
             pStmSendCommentaire.setString(3, contenu);
@@ -366,6 +410,7 @@ public class ConnexionBD {
 
     public void ajouterRecette(int idUtilisateur, String titre, String description, Date date, String imageUri, String ingredients) throws SQLException {
         try {
+            // Préparer et executer la requête qui ajoute une nouvelle recette
             Log.d("ConnexionBD", "Ajout de recette - ID utilisateur : " + idUtilisateur);
             pStmAddPlat.setInt(1, idUtilisateur);
             pStmAddPlat.setString(2, titre);
@@ -376,8 +421,10 @@ public class ConnexionBD {
             pStmAddPlat.setString(6, ingredients);
 
             pStmAddPlat.executeUpdate();
+            // Afficher un message de succès dans les logs
             Log.d("ConnexionBD", "Recette ajoutée avec succès !");
         } catch (SQLException e) {
+            // En cas d'erreur, afficher un message d'erreur dans les logs
             Log.e("ConnexionBD", "Erreur lors de l'ajout de la recette : " + e.getMessage());
             e.printStackTrace();
         }
@@ -385,12 +432,16 @@ public class ConnexionBD {
     }
 
     public Plat getRecetteById(int idP) {
+        // récuprer les recette à partir de son id
             try {
+
+                // Préparer et executer la requête
                 pStmRecetteById.setInt(1, idP);
 
+                // Vérifier s'il y a un résultat
                 ResultSet res = this.pStmRecetteById.executeQuery();
                 if (res.next()) {
-                    // Récupérer les données de la ligne
+                    // Récupérer les données du résultat
                     int idUtilisateur = res.getInt("IdUtilisateur");
                     String titre = res.getString("Titre");
                     String description = res.getString("Description");
@@ -419,9 +470,11 @@ public class ConnexionBD {
     }
 
     public int getLatestRecipeId() {
-        int latestRecipeId = -1;
+        // Obtenir l'ID de la dernière recette ajoutée à la base de données
+        int latestRecipeId = -1; // -1 par défaut
 
         try {
+            // Préparer et executer la requête qui récupère la dernière recette ajoutée
             ResultSet res = this.pStmGetLatestRecipeId.executeQuery();
             if (res.next()) {
                 latestRecipeId = res.getInt("LatestRecipeId");
@@ -431,14 +484,19 @@ public class ConnexionBD {
             e.printStackTrace();
         }
         fermerConnexion();
+        // Retourner l'ID de la dernière recette ajoutée
         return latestRecipeId;
     }
 
     public Utilisateur getUtilisateurById(int userId) {
+        // Obenir un utilisateur à partir de son ID
         try {
+            // Préparer et executer la requête
             pStmGetUtilisateur.setInt(1, userId);
             ResultSet resultSet = pStmGetUtilisateur.executeQuery();
+            // Vérifier s'il y a un résultat
             if (resultSet.next()) {
+                // Récupérer les informations de l'utilisateur
                 Utilisateur utilisateur = new Utilisateur(
                         resultSet.getInt("IdUtilisateur"),
                         resultSet.getString("Prenom"),
@@ -450,6 +508,7 @@ public class ConnexionBD {
                         resultSet.getString("Photo")
                 );
                 fermerConnexion();
+                // Retourner l'utilisateur trouvé
                 return utilisateur;
             }
         } catch (SQLException e) {
@@ -460,6 +519,7 @@ public class ConnexionBD {
     }
 
     public void updateUtilisateur(Utilisateur utilisateurConnecte) {
+        // Mettre à jour les informations d'un utilisateur dans la base de données.
         try {
             // Définir les paramètres de la requête avec les nouvelles valeurs
             pStmUpdateUser.setString(1, utilisateurConnecte.getPrenom());
@@ -468,7 +528,7 @@ public class ConnexionBD {
             pStmUpdateUser.setString(4, utilisateurConnecte.getPhoto());
             pStmUpdateUser.setInt(5, utilisateurConnecte.getIdUtilisateur());
             pStmUpdateUser.executeUpdate();
-
+            // Executer la requête
             pStmUpdateUser.close();
             Log.d("ConnexionBD", "Utilisateur mis à jour avec succès dans la base de données.");
             System.out.println();
@@ -480,15 +540,19 @@ public class ConnexionBD {
         fermerConnexion();
     }
     public List<Plat> getTousRecetteByIdUser(Utilisateur utilisateur, ArrayList<String> dates) {
+        // Obtenir toutes les recettes d'un utilisateur à partir de la base de données
         List<Plat> recettes = new ArrayList<>();
         try {
+            // Parcourir toutes les dates fournies
             for (String formattedDate : dates) {
                 Log.d("ConnexionBD", "Formatted Date : " + formattedDate);
+                // Préparer et executer la requête
                 pStmRecetteByIdAndDate.setInt(1, utilisateur.getIdUtilisateur());
                 pStmRecetteByIdAndDate.setString(2, formattedDate);
                 Log.d("ConnexionBD", "Requête SQL : " + pStmRecetteByIdAndDate);
                 ResultSet res = pStmRecetteByIdAndDate.executeQuery();
 
+                // Parcourir les résultats
                 while (res.next()) {
                     int idRecette = res.getInt("IdRecette");
                     String titre = res.getString("Titre");
@@ -497,6 +561,7 @@ public class ConnexionBD {
                     String imageRecette = res.getString("ImageRecette");
                     String ingredients = res.getString("Ingredient");
 
+                    // Créer un plat avec les bons paramètres récupérés
                     Plat plat = new Plat(idRecette, utilisateur.getIdUtilisateur(), titre, description, dateRecette, imageRecette, ingredients);
                     plat.setIdP(idRecette);
                     plat.setIdUtilisateur(utilisateur.getIdUtilisateur());
@@ -506,6 +571,7 @@ public class ConnexionBD {
                     plat.setImgRecette(imageRecette);
                     plat.setIngrédients(ingredients);
 
+                    // Ajouteer le plat à la liste
                     recettes.add(plat);
                 }
             }
@@ -521,7 +587,9 @@ public class ConnexionBD {
     }
 
     public void like(int userId, int recetteId){
+        // Aimer un plat
         try {
+            // Prépare et execute la requête
             pStmLike.setInt(2,userId);
             pStmLike.setInt(1,recetteId);
             this.pStmLike.executeUpdate();
@@ -531,7 +599,9 @@ public class ConnexionBD {
     }
 
     public void Unlike(int userId, int recetteId){
+        // Ne plus aimer un plat
         try {
+            // Prépare et execute la requête
             pStmUnLike.setInt(1,userId);
             pStmUnLike.setInt(2,recetteId);
             this.pStmUnLike.executeUpdate();
@@ -541,14 +611,16 @@ public class ConnexionBD {
     }
 
     public boolean likeExists(int userId, int recetteId) {
+        // Vérifier si un like exsit ou pas sur un plat
         boolean likeExists = false;
 
         try {
+            // Préparer et executer la requête
             pStmLikeExists.setInt(1, userId);
             pStmLikeExists.setInt(2, recetteId);
 
             ResultSet resultSet = pStmLikeExists.executeQuery();
-            //true ou false en fonction de si ça renvoie qqc ou pas
+            //true ou false en fonction de si ça renvoie quelquechose ou pas
             likeExists = resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -558,11 +630,14 @@ public class ConnexionBD {
     }
 
     public List<Plat> getPlatLike(int userId) {
+        // Obtenir la liste des plats aimés par un utilisateur donné
         List<Plat> plats = new ArrayList<>();
         try {
+            // Préparer et executer la requête
             pStmGetLike.setInt(1, userId);
             ResultSet resultSet = pStmGetLike.executeQuery();
             while (resultSet.next()) {
+                // Parcourir les résultats de la requête et ajouter les plats aimés à la liste
                 Plat plat = new Plat(
                         resultSet.getInt("IdRecette"),
                         resultSet.getInt("IdUtilisateur"),

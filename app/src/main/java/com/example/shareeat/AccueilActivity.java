@@ -43,12 +43,16 @@ public class AccueilActivity extends AppCompatActivity {
             actionBar.hide();
         }
 
+        // Récupération de l'utilisateur connecté
         user = UserDataSingleton.getInstance().getUtilisateur();
+
+        // Initialisation des éléments de la vue
         bottomNavigationView = findViewById(R.id.navbar);
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
         listView = findViewById(R.id.recettes);
         profil = findViewById(R.id.toolbar_button);
 
+        // Gestion du clic sur le bouton de profil
         profil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,13 +61,16 @@ public class AccueilActivity extends AppCompatActivity {
             }
         });
 
+        // Affichage des recettes de l'utilisateur connecté
         if (user != null) {
             try {
                 connexionBD = new ConnexionBD();
                 if (connexionBD != null) {
+                    // Récupération des recettes de l'utilisateur
                     List<Plat> plats = connexionBD.getRecetteAccueil(user.getIdUtilisateur());
                     if (plats != null) {
-                        RecetteAdapter recetteAdapter = new RecetteAdapter(this, plats, user);
+                        // Création de l'adaptateur de la liste des recettes
+                        RecetteAdapter recetteAdapter = new RecetteAdapter(AccueilActivity.this, plats, user);
                         listView.setAdapter(recetteAdapter);
                     } else {
                         Log.d("PlatDebug", "La liste de plats est null");
@@ -75,12 +82,12 @@ public class AccueilActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         } else {
-            // Gérez le cas où l'objet user est null
+            // Gestion du cas où l'objet user est null
             Log.d("PlatDebug", "L'objet user est null");
             // Affichez un message d'erreur ou prenez une action appropriée
         }
 
-
+        // Gestion de la navbar
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

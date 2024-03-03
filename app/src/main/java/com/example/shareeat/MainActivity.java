@@ -20,12 +20,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Masque un éléments de la navbar
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
 
-
+        // Initialisation des éléments de la vue
         redirection = (Button) findViewById(R.id.btnRedirection);
         redirect2 = (Button) findViewById(R.id.btnRedirection2);
         redirect3 = (Button) findViewById(R.id.btnRedirection3);
